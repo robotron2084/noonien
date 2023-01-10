@@ -1,5 +1,5 @@
-# Commander - Simple Command Library for Unity
+# Soong - An Entity Component System for Data
 
 WORK IN PROGRESS
 
-This is a simple command library that can be used for queueing and executing a number of commands for later execution.
+This is a simple data layer for working with games.
