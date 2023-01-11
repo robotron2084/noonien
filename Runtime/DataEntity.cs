@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace com.enemyhideout.soong
 {
-  public class DataModel
+  public class DataEntity
   {
     public static int __index = 0;
     public static string LogTag = "Soong";
 
-    private DataModel _parent;
-    public DataModel Parent
+    private DataEntity _parent;
+    public DataEntity Parent
     {
       get
       {
@@ -31,12 +31,12 @@ namespace com.enemyhideout.soong
       }
     }
 
-    private void RemoveChild(DataModel dataModel)
+    private void RemoveChild(DataEntity dataEntity)
     {
-      _children.Remove(dataModel);
+      _children.Remove(dataEntity);
     }
 
-    private List<DataModel> _children = new List<DataModel>();
+    private List<DataEntity> _children = new List<DataEntity>();
 
     public int ChildrenCount
     {
@@ -59,23 +59,23 @@ namespace com.enemyhideout.soong
 
     private static ILogger _logger = new Logger(Debug.unityLogger.logHandler);
 
-    public DataModel()
+    public DataEntity()
     {
       _name = CreateName();
     }
 
-    public DataModel(string name)
+    public DataEntity(string name)
     {
       _name = name;
     }
 
-    public DataModel(params DataElement[] elements)
+    public DataEntity(params DataElement[] elements)
     {
       _name = CreateName();
       AddElementsInternal(_elementsMap, elements);
     }
 
-    public DataModel(string name, params DataElement[] elements)
+    public DataEntity(string name, params DataElement[] elements)
     {
       AddElementsInternal(_elementsMap, elements);
     }
@@ -87,15 +87,15 @@ namespace com.enemyhideout.soong
       set => _name = value;
     }
 
-    public DataModel GetChildAt(int index)
+    public DataEntity GetChildAt(int index)
     {
       return _children[index];
     }
 
-    public void AddChild(DataModel model)
+    public void AddChild(DataEntity entity)
     {
-      _children.Add(model);
-      model.Parent = this;
+      _children.Add(entity);
+      entity.Parent = this;
     }
 
     public T GetElement<T>() where T : DataElement

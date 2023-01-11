@@ -7,12 +7,20 @@ namespace com.enemyhideout.soong
 {
   public class DataElement
   {
-    public DataModel _parent;
+    public DataEntity _parent;
 
-    public DataModel Parent
+    private INotifyManager _notifyManager;
+
+    public DataElement(DataEntity parent, INotifyManager notifyManager)
+    {
+      _parent = parent;
+      parent.AddElement(this);
+      _notifyManager = notifyManager;
+    }
+
+    public DataEntity Parent
     {
       get => _parent;
-      set => _parent = value;
     }
 
     public string Name
@@ -37,7 +45,7 @@ namespace com.enemyhideout.soong
 
     public void MarkDirty()
     {
-      // todo, mark this up!
+      _notifyManager?.EnqueueNotifier(NotifyUpdated);
     }
 
     public void NotifyUpdated()

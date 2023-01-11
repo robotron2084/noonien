@@ -10,12 +10,12 @@ namespace DefaultNamespace
   {
   }
 
-  public class ElementObserver<T> : ElementObserver, IModelObserver where T : DataElement
+  public class ElementObserver<T> : ElementObserver, IEntityObserver where T : DataElement
   {
     // The element we're interested in. It is always assumed there is at least one element being looked at.
     protected T _element;
     // The element's data model.
-    protected DataModel _model;
+    protected DataEntity Entity;
     // The data source we use to query for the model.
     protected DataSource _source;
     // A list of observers that listen to various elements. By default we just listen to one.
@@ -35,13 +35,13 @@ namespace DefaultNamespace
       }
     }
 
-    public void ModelUpdated(DataModel model)
+    public void EntityUpdated(DataEntity entity)
     {
-      if (model == _model)
+      if (entity == Entity)
       {
         return;
       }
-      _model = model;
+      Entity = entity;
       foreach (var dataObserver in _observers)
       {
         if (dataObserver.Element != null)
@@ -50,9 +50,9 @@ namespace DefaultNamespace
           dataObserver.RemoveObserver(dataObserver);
         }
         
-        if (model != null)
+        if (entity != null)
         {
-          var element = model.GetElement<T>();
+          var element = entity.GetElement<T>();
           if (element != null)
           {
             DataAdded(element);
@@ -94,7 +94,7 @@ namespace DefaultNamespace
 
       _observers.Clear();
 
-      _model = null;
+      Entity = null;
       if (_source != null)
       {
         _source.RemoveObserver(this);

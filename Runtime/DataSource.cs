@@ -9,40 +9,40 @@ namespace com.enemyhideout.soong
   public class DataSource : MonoBehaviour
   {
 
-    private DataModel _model;
+    private DataEntity _entity;
 
-    public DataModel Model
+    public DataEntity Entity
     {
       get
       {
-        return _model;
+        return _entity;
       }
       set
       {
-        if (_model == value)
+        if (_entity == value)
         {
           return;
         }
-        _model = value;
+        _entity = value;
         foreach (var modelObserver in _observations)
         {
-          modelObserver.ModelUpdated(_model);
+          modelObserver.EntityUpdated(_entity);
         }
       }
     }
 
-    private List<IModelObserver> _observations = new List<IModelObserver>();
+    private List<IEntityObserver> _observations = new List<IEntityObserver>();
 
-    public void ObserveModel(IModelObserver observer)
+    public void ObserveModel(IEntityObserver observer)
     {
       _observations.Add(observer);
-      if (_model != null)
+      if (_entity != null)
       {
-        observer.ModelUpdated(_model);
+        observer.EntityUpdated(_entity);
       }
     }
 
-    public void RemoveObserver(IModelObserver observer)
+    public void RemoveObserver(IEntityObserver observer)
     {
       _observations.Remove(observer);
     }

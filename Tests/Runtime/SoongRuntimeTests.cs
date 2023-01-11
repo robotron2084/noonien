@@ -20,8 +20,8 @@ public class SoongRuntimeTests
     [UnityTest]
     public IEnumerator SoongRuntimeTestsWithEnumeratorPasses()
     {
-        HealthElement health = new HealthElement();
-        DataModel model = new DataModel(health);
+        DataEntity entity = new DataEntity();
+        HealthElement health = new HealthElement(entity, null);
 
         health.Health = 10;
 
@@ -33,7 +33,7 @@ public class SoongRuntimeTests
         var dataSource2 = go2.AddComponent<DataSource>();
         var healthObserver2 = go2.AddComponent<HealthObserver>();
 
-        dataSource.Model = model;
+        dataSource.Entity = entity;
         // healthObserver won't initialize until start, so let's wait.
         yield return null;
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
@@ -43,7 +43,7 @@ public class SoongRuntimeTests
         health.NotifyUpdated();
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
 
-        dataSource.Model = null;
+        dataSource.Entity = null;
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(-1));
 
         // Ensure that the observer isn't receiving notifications.
@@ -51,13 +51,37 @@ public class SoongRuntimeTests
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(-1));
         
         // glue to data source2.
-        dataSource2.Model = model;
+        dataSource2.Entity = entity;
         Assert.That(healthObserver2.ObservedHealth, Is.EqualTo(health.Health));
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(-1));
 
-        dataSource.Model = model;
+        dataSource.Entity = entity;
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
         Assert.That(healthObserver2.ObservedHealth, Is.EqualTo(health.Health));
         
+    }
+
+    [UnityTest]
+    public IEnumerator TestNotify()
+    {
+        TestNotifyManager notifyManager = new TestNotifyManager();
+        DataEntity entity = new DataEntity();
+        HealthElement health = new HealthElement(entity, notifyManager);
+
+        health.Health = 10;
+
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<DataSource>();
+        var healthObserver = go.AddComponent<HealthObserver>();
+
+        dataSource.Entity = entity;
+        // healthObserver won't initialize until start, so let's wait.
+        yield return null;
+        Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
+
+        health.Health = 9;
+        notifyManager.NotifyObservers();
+        Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
+
     }
 }

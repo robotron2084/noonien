@@ -11,11 +11,11 @@ public class SoongTests
     [Test]
     public void SoongTestsNaming()
     {
-        DataModel model = new DataModel();
-        DataModel.__index = 0;
-        Assert.That(model.Name, Is.EqualTo("Model 0"));
+        DataEntity entity = new DataEntity();
+        DataEntity.__index = 0;
+        Assert.That(entity.Name, Is.EqualTo("Model 0"));
 
-        DataModel model2 = new DataModel("My Name");
+        DataEntity model2 = new DataEntity("My Name");
         Assert.That(model2.Name, Is.EqualTo("My Name"));
         
     }
@@ -23,21 +23,21 @@ public class SoongTests
     [Test]
     public void TestAddElement()
     {
-        DataModel model = new DataModel();
-        model.AddElement(new DataElement());
-        Assert.That(model.ElementsCount, Is.EqualTo(1));
+        DataEntity entity = new DataEntity();
+        new DataElement(entity, null);
+        Assert.That(entity.ElementsCount, Is.EqualTo(1));
     }
 
     [Test]
     public void TestAddChild()
     {
-        DataModel parent = new DataModel();
-        DataModel child = new DataModel();
+        DataEntity parent = new DataEntity();
+        DataEntity child = new DataEntity();
         parent.AddChild(child);
         
         Assert.That(parent.ChildrenCount, Is.EqualTo(1));
 
-        DataModel childRetVal = parent.GetChildAt(0);
+        DataEntity childRetVal = parent.GetChildAt(0);
         Assert.That(childRetVal, Is.EqualTo(child));
         Assert.That(child.Parent, Is.EqualTo(parent));
         Assert.That(parent.Parent, Is.Null);
@@ -46,8 +46,6 @@ public class SoongTests
         
         Assert.That(parent.ChildrenCount, Is.EqualTo(0));
         Assert.That(child.Parent, Is.Null);
-
-        
         
     }
 
