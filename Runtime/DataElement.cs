@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace;
 
 namespace com.enemyhideout.soong
 {
   public class DataElement
   {
-
     public DataModel _parent;
 
     public DataModel Parent
@@ -23,44 +23,46 @@ namespace com.enemyhideout.soong
       }
     }
 
-    private List<Observation> _observers;
+    private List<IDataObserver> _observers = new List<IDataObserver>();
 
-    public void AddObserver(IDataObserver observer, Action<DataElement> callback)
+    public void AddObserver(IDataObserver observer)
     {
-      _observers.Add(new Observation
-      {
-        Observer = observer,
-        Callback = callback
-      });
+      _observers.Add(observer);
     }
 
     public void RemoveObserver(IDataObserver observer)
     {
-      var obs = _observers.RemoveAll(x => x.Observer == observer);
+      _observers.Remove(observer);
     }
 
     public void MarkDirty()
     {
-      
+      // todo, mark this up!
     }
 
-    public void NotifyObservers()
+    public void NotifyUpdated()
     {
       foreach (var observation in _observers)
       {
-        observation.Callback(this);
+        observation.ElementUpdated(this);
       }
     }
-  }
 
+    public void SetProperty<T>(T newVal, ref T val)
+    {
+      PropertyCheck(newVal, ref val, this);
+    }
 
-  public class Observation
-  {
-    public IDataObserver Observer;
-    public Action<DataElement> Callback;
-  }
-  
-  public interface IDataObserver
-  {
+    public static void PropertyCheck<T>(T newVal, ref T val, DataElement element)
+    {
+      if (newVal.Equals(val))
+      {
+        return;
+      }
+
+      val = newVal;
+      element.MarkDirty();
+
+    }
   }
 }

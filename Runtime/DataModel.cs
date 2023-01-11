@@ -9,12 +9,53 @@ namespace com.enemyhideout.soong
   {
     public static int __index = 0;
     public static string LogTag = "Soong";
-    
-    public DataModel Parent = null;
-    public List<DataModel> Children = new List<DataModel>();
-    public List<DataElement> Elements = new List<DataElement>();
+
+    private DataModel _parent;
+    public DataModel Parent
+    {
+      get
+      {
+        return _parent;
+      }
+      set
+      {
+        if (_parent == value)
+        {
+          return;
+        }
+        if (_parent != null)
+        {
+          _parent.RemoveChild(this);
+        }
+        _parent = value;
+      }
+    }
+
+    private void RemoveChild(DataModel dataModel)
+    {
+      _children.Remove(dataModel);
+    }
+
+    private List<DataModel> _children = new List<DataModel>();
+
+    public int ChildrenCount
+    {
+      get
+      {
+        return _children.Count;
+      }
+    }
 
     private Dictionary<Type, DataElement> _elementsMap = new Dictionary<Type, DataElement>();
+
+    public int ElementsCount
+    {
+      get
+      {
+        return _elementsMap.Count;
+      }
+    }
+
 
     private static ILogger _logger = new Logger(Debug.unityLogger.logHandler);
 
@@ -28,9 +69,15 @@ namespace com.enemyhideout.soong
       _name = name;
     }
 
+    public DataModel(params DataElement[] elements)
+    {
+      _name = CreateName();
+      AddElementsInternal(_elementsMap, elements);
+    }
+
     public DataModel(string name, params DataElement[] elements)
     {
-      AddElementsInternal(_elementsMap, Elements, elements);
+      AddElementsInternal(_elementsMap, elements);
     }
 
     private string _name;
@@ -42,7 +89,13 @@ namespace com.enemyhideout.soong
 
     public DataModel GetChildAt(int index)
     {
-      return Children[index];
+      return _children[index];
+    }
+
+    public void AddChild(DataModel model)
+    {
+      _children.Add(model);
+      model.Parent = this;
     }
 
     public T GetElement<T>() where T : DataElement
@@ -52,7 +105,7 @@ namespace com.enemyhideout.soong
 
     public void AddElement(DataElement element)
     {
-      AddElementInternal(_elementsMap, Elements, element);
+      AddElementInternal(_elementsMap, element);
     }
 
     public static string CreateName()
@@ -62,18 +115,16 @@ namespace com.enemyhideout.soong
 
     private static void AddElementsInternal(
       Dictionary<Type, DataElement> map, 
-      List<DataElement> elementsList,
       IEnumerable<DataElement> newElements)
     {
       foreach (var dataElement in newElements)
       {
-        AddElementInternal(map, elementsList, dataElement);
+        AddElementInternal(map, dataElement);
       }
     }
 
     private static void AddElementInternal(
       Dictionary<Type, DataElement> map,
-      List<DataElement> elementsList,
       DataElement element)
     {
       var t = element.GetType();
@@ -83,8 +134,7 @@ namespace com.enemyhideout.soong
         return;
       }
       map[t] = element;
-      elementsList.Add(element);
     }
-    
+
   }
 }
