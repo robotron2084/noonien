@@ -21,12 +21,12 @@ namespace DefaultNamespace
     // A list of observers that listen to various elements. By default we just listen to one.
     protected List<DataObserver<T>> _observers = new List<DataObserver<T>>();
 
-    void Awake()
+    protected virtual void Awake()
     {
       Listen<T>(DataUpdated);
     }
 
-    void Start()
+    protected virtual void Start()
     {
       _source = GetComponentInParent<DataSource>();
       if (_source != null)
@@ -100,10 +100,5 @@ namespace DefaultNamespace
         _source.RemoveObserver(this);
       }
     }
-  }
-
-  public interface IModelObserver
-  {
-    void ModelUpdated(DataModel model);
   }
 }
