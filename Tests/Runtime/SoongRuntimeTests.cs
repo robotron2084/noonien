@@ -21,17 +21,17 @@ public class SoongRuntimeTests
     [UnityTest]
     public IEnumerator SoongRuntimeTestsWithEnumeratorPasses()
     {
-        DataEntity entity = new DataEntity();
-        HealthElement health = new HealthElement(entity, null);
+        DataEntity entity = new DataEntity(null);
+        HealthElement health = new HealthElement(entity);
 
         health.Health = 10;
 
         GameObject go = new GameObject();
-        var dataSource = go.AddComponent<DataSource>();
+        var dataSource = go.AddComponent<EntitySource>();
         var healthObserver = go.AddComponent<HealthObserver>();
 
         GameObject go2 = new GameObject();
-        var dataSource2 = go2.AddComponent<DataSource>();
+        var dataSource2 = go2.AddComponent<EntitySource>();
         var healthObserver2 = go2.AddComponent<HealthObserver>();
 
         dataSource.Entity = entity;
@@ -67,13 +67,13 @@ public class SoongRuntimeTests
     {
         GameObject goManager = new GameObject();
         NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
-        DataEntity entity = new DataEntity();
-        HealthElement health = new HealthElement(entity, notifyManager);
+        DataEntity entity = new DataEntity(notifyManager);
+        HealthElement health = new HealthElement(entity);
 
         health.Health = 10;
 
         GameObject go = new GameObject();
-        var dataSource = go.AddComponent<DataSource>();
+        var dataSource = go.AddComponent<EntitySource>();
         var healthObserver = go.AddComponent<HealthObserver>();
 
         dataSource.Entity = entity;

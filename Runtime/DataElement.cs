@@ -6,17 +6,7 @@ namespace com.enemyhideout.soong
 {
   public class DataElement
   {
-    private bool _dirty = false;
-    public DataEntity _parent;
-
-    private INotifyManager _notifyManager;
-
-    public DataElement(DataEntity parent, INotifyManager notifyManager)
-    {
-      _parent = parent;
-      parent.AddElement(this);
-      _notifyManager = notifyManager;
-    }
+    private DataEntity _parent;
 
     public DataEntity Parent
     {
@@ -30,43 +20,39 @@ namespace com.enemyhideout.soong
         return $"{_parent.Name}.{GetType()}";
       }
     }
+    private Observable<DataElement> _observable;
+    private INotifyManager _notifyManager;
 
-    private List<IDataObserver> _observers = new List<IDataObserver>();
-
-    public void AddObserver(IDataObserver observer)
+    public DataElement(DataEntity parent)
     {
-      _observers.Add(observer);
+      _parent = parent;
+      _notifyManager = parent.NotifyManager;
+      _observable = new Observable<DataElement>(this, _notifyManager);
+      parent.AddElement(this);
     }
-
-    public void RemoveObserver(IDataObserver observer)
-    {
-      _observers.Remove(observer);
-    }
-
-    public void MarkDirty()
-    {
-      if (!_dirty)
-      {
-        _dirty = true; // do not allow enqueuing.
-        _notifyManager?.EnqueueNotifier(NotifyUpdated);
-      }
-    }
-
+    
     public void NotifyUpdated()
     {
-      _dirty = false;
-      foreach (var observation in _observers)
-      {
-        observation.ElementUpdated(this);
-      }
+      _observable.NotifyUpdated();
+    }
+
+
+    public void RemoveObserver(IDataObserver<DataElement> element)
+    {
+      _observable.RemoveObserver(element);
+    }
+
+    public void AddObserver(IDataObserver<DataElement> element)
+    {
+      _observable.AddObserver(element);
     }
 
     public void SetProperty<T>(T newVal, ref T val)
     {
-      PropertyCheck(newVal, ref val, this);
+      PropertyCheck(newVal, ref val, _observable);
     }
 
-    public static void PropertyCheck<T>(T newVal, ref T val, DataElement element)
+    public static void PropertyCheck<T>(T newVal, ref T val, Observable observable)
     {
       if (newVal.Equals(val))
       {
@@ -74,7 +60,7 @@ namespace com.enemyhideout.soong
       }
 
       val = newVal;
-      element.MarkDirty();
+      observable.MarkDirty();
 
     }
   }

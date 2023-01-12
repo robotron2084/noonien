@@ -5,7 +5,7 @@ namespace com.enemyhideout.soong
 {
   
   // Provides the glue between the data hierarchy and the game object hierarchy.
-  public class DataSource : MonoBehaviour
+  public class EntitySource : MonoBehaviour
   {
 
     private DataEntity _entity;

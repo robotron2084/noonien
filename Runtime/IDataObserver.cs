@@ -2,33 +2,33 @@
 
 namespace com.enemyhideout.soong
 {
-  public interface IDataObserver
+  public interface IDataObserver<T>
   {
-    void ElementUpdated(DataElement instance);
+    void DataUpdated(T instance);
   }
 
-  public class DataObserver<T> : IDataObserver where T: DataElement
+  public class DataObserver<TElementSubClass> : IDataObserver<DataElement> where TElementSubClass: DataElement
   {
-    private Action<T> _callback;
-    public DataObserver(Action<T> callback)
+    private Action<TElementSubClass> _callback;
+    public DataObserver(Action<TElementSubClass> callback)
     {
       _callback = callback;
     }
 
-    public T Element { get; set; }
+    public TElementSubClass Element { get; set; }
 
-    public void ElementUpdated(DataElement instance)
+    public void DataUpdated(DataElement instance)
     {
-      _callback((T)instance);
+      _callback((TElementSubClass)instance);
     }
 
-    public void RemoveObserver(DataObserver<T> dataObserver)
+    public void RemoveObserver(DataObserver<TElementSubClass> dataObserver)
     {
       Element.RemoveObserver(this);
       Element = null;
     }
 
-    public void AddObserver(T element)
+    public void AddObserver(TElementSubClass element)
     {
       if (element != null)
       {

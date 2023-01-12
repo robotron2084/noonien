@@ -17,7 +17,7 @@ namespace com.enemyhideout.soong
     // The element's data model.
     protected DataEntity Entity;
     // The data source we use to query for the model.
-    protected DataSource _source;
+    protected EntitySource _source;
     // A list of observers that listen to various elements. By default we just listen to one.
     protected List<DataObserver<T>> _observers = new List<DataObserver<T>>();
 
@@ -28,7 +28,7 @@ namespace com.enemyhideout.soong
 
     protected virtual void Start()
     {
-      _source = GetComponentInParent<DataSource>();
+      _source = GetComponentInParent<EntitySource>();
       if (_source != null)
       {
         _source.ObserveModel(this);
@@ -57,7 +57,7 @@ namespace com.enemyhideout.soong
           {
             DataAdded(element);
             dataObserver.AddObserver(element);
-            dataObserver.ElementUpdated(element);
+            dataObserver.DataUpdated(element);
           }
         }
       }

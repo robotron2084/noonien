@@ -7,8 +7,23 @@ namespace com.enemyhideout.soong
 {
   public class DataEntity
   {
+    private readonly INotifyManager _notifyManager;
+
+    public INotifyManager NotifyManager => _notifyManager;
+
     public static int __index = 0;
     public static string LogTag = "Soong";
+
+    private EntityCollection _children;
+
+    public IEntityCollection Children
+    {
+      get
+      {
+        LazyInitChildren();
+        return _children;
+      }
+    }
 
     private DataEntity _parent;
     public DataEntity Parent
@@ -25,28 +40,34 @@ namespace com.enemyhideout.soong
         }
         if (_parent != null)
         {
-          _parent.RemoveChild(this);
+          _parent.DetachChildInternal(this);
         }
         _parent = value;
-      }
-    }
+        if (_parent != null)
+        {
+          _parent.AttachChildInternal(this);
+        }
 
-    private void RemoveChild(DataEntity dataEntity)
-    {
-      _children.Remove(dataEntity);
-    }
-
-    private List<DataEntity> _children = new List<DataEntity>();
-
-    public int ChildrenCount
-    {
-      get
-      {
-        return _children.Count;
       }
     }
 
     private Dictionary<Type, DataElement> _elementsMap = new Dictionary<Type, DataElement>();
+
+    
+    /// <summary>
+    /// Better than calling Children.Count because it won't alloc children.
+    /// </summary>
+    public int ChildrenCount
+    {
+      get
+      {
+        if (_children == null)
+        {
+          return 0;
+        }
+        return _children.Count;
+      }
+    }
 
     public int ElementsCount
     {
@@ -56,27 +77,30 @@ namespace com.enemyhideout.soong
       }
     }
 
-
     private static ILogger _logger = new Logger(Debug.unityLogger.logHandler);
 
-    public DataEntity()
+    public DataEntity(INotifyManager notifyManager)
     {
+      _notifyManager = notifyManager;
       _name = CreateName();
     }
 
-    public DataEntity(string name)
+    public DataEntity(INotifyManager notifyManager, string name)
     {
+      _notifyManager = notifyManager;
       _name = name;
     }
 
-    public DataEntity(params DataElement[] elements)
+    public DataEntity(INotifyManager notifyManager, params DataElement[] elements)
     {
+      _notifyManager = notifyManager;
       _name = CreateName();
       AddElementsInternal(_elementsMap, elements);
     }
 
-    public DataEntity(string name, params DataElement[] elements)
+    public DataEntity(INotifyManager notifyManager, string name, params DataElement[] elements)
     {
+      _notifyManager = notifyManager;
       AddElementsInternal(_elementsMap, elements);
     }
 
@@ -89,18 +113,44 @@ namespace com.enemyhideout.soong
 
     public DataEntity GetChildAt(int index)
     {
-      return _children[index];
+      if (_children == null)
+      {
+        throw new ArgumentOutOfRangeException($"{Name} has no children.");
+      }
+      return Children[index];
     }
 
-    public void AddChild(DataEntity entity)
+    private void LazyInitChildren()
     {
-      _children.Add(entity);
-      entity.Parent = this;
+      if (_children == null)
+      {
+        _children = new EntityCollection(_notifyManager);
+      }
+    }
+
+    public void AttachChildInternal(DataEntity entity)
+    {
+      if (entity.Parent != this)
+      {
+        throw new Exception("Attempting to attach child to an entity who is not the parent. This method should only be called internally by children.");
+      }
+      LazyInitChildren();
+      _children.AddChild(entity);
+    }
+    
+    public void DetachChildInternal(DataEntity dataEntity)
+    {
+      if (dataEntity.Parent != this)
+      {
+        throw new Exception("Attempting to destach child from an entity who is not the parent.");
+      }
+      LazyInitChildren();
+      _children.RemoveChild(dataEntity);
     }
 
     public T GetElement<T>() where T : DataElement
     {
-      return (T)_elementsMap[typeof(T)];
+      return (T)_elementsMap[typeof(T)]; // todo: handle subtypes, maybe we need to iterate over this as a list.
     }
 
     public void AddElement(DataElement element)

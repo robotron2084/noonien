@@ -10,3 +10,33 @@ TODO:
   * Entity Collections
   * Docs
   * Helper functions for instantiation and collections.
+  * GetElement<T> should handle subtypes/interfaces better?
+
+So I want two types of observable collections:
+
+The children of an entity.
+
+A 'virtual collection'. Maybe all collections should be virtual, and the children collection should just be a subtype of that collection.
+
+So what do we want to observe, and how do we want to observe it?
+
+Something like:
+
+```csharp
+
+var parent = new DataEntity("EnemyUnits");
+// by default all Children implement IEntityCollection.
+var element = new CollectionElement(parent.Children, notifyManager, collection);
+
+var enemyUnitManager = new GameObject();
+var dataSource = enemyUnitManager.AddComponent<DataSource>();
+var enemyUnitCounter = enemyUnitManager.AddComponent<EntityCollectionObserver>();
+
+dataSource.Entity = parent;
+
+//add children to parent, and the element will update and notify.
+
+```
+```csharp
+ObserveCollection(new VirtualCollection(new List<DataEntity>(){  ... } ));
+```
