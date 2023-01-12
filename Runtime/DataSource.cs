@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using DefaultNamespace;
 using UnityEngine;
 
 namespace com.enemyhideout.soong

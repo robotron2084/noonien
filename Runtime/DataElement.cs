@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DefaultNamespace;
 
 namespace com.enemyhideout.soong
 {
   public class DataElement
   {
+    private bool _dirty = false;
     public DataEntity _parent;
 
     private INotifyManager _notifyManager;
@@ -45,11 +45,16 @@ namespace com.enemyhideout.soong
 
     public void MarkDirty()
     {
-      _notifyManager?.EnqueueNotifier(NotifyUpdated);
+      if (!_dirty)
+      {
+        _dirty = true; // do not allow enqueuing.
+        _notifyManager?.EnqueueNotifier(NotifyUpdated);
+      }
     }
 
     public void NotifyUpdated()
     {
+      _dirty = false;
       foreach (var observation in _observers)
       {
         observation.ElementUpdated(this);

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DefaultNamespace
+namespace com.enemyhideout.soong
 {
   public interface INotifyManager
   {

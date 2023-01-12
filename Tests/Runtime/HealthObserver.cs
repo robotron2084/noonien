@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+﻿using com.enemyhideout.soong;
 using UnityEngine;
 
 namespace Tests.Runtime

@@ -4,7 +4,7 @@ using com.enemyhideout.soong;
 using PlasticGui.Diff.Annotate;
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace com.enemyhideout.soong
 {
   public class ElementObserver : MonoBehaviour
   {

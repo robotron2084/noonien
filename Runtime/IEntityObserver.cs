@@ -1,6 +1,6 @@
 ﻿using com.enemyhideout.soong;
 
-namespace DefaultNamespace
+namespace com.enemyhideout.soong
 {
   public interface IEntityObserver
   {

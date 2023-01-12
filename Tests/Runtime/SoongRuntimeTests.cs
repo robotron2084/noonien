@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using com.enemyhideout.soong;
@@ -64,7 +65,8 @@ public class SoongRuntimeTests
     [UnityTest]
     public IEnumerator TestNotify()
     {
-        TestNotifyManager notifyManager = new TestNotifyManager();
+        GameObject goManager = new GameObject();
+        NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
         DataEntity entity = new DataEntity();
         HealthElement health = new HealthElement(entity, notifyManager);
 
@@ -80,8 +82,65 @@ public class SoongRuntimeTests
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
 
         health.Health = 9;
-        notifyManager.NotifyObservers();
+        yield return null;
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
 
+        health.Health = 8;
+        yield return null;
+        Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
     }
+    
+    [UnityTest]
+    public IEnumerator TestOneIteration()
+    {
+        GameObject goManager = new GameObject();
+        NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
+
+        GameObject go = new GameObject();
+        TestUpdateBehavior updateBehavior = go.AddComponent<TestUpdateBehavior>();
+        updateBehavior._NotifyManager = notifyManager;
+        updateBehavior.TriggerUpdate();
+        yield return null;
+        Assert.That(updateBehavior.TestValue, Is.EqualTo(42));
+    }
+    
+    [UnityTest]
+    public IEnumerator TestTwoIterations()
+    {
+        GameObject goManager = new GameObject();
+        NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
+
+        GameObject go = new GameObject();
+        DependentUpdateBehaviour updateBehavior = go.AddComponent<DependentUpdateBehaviour>();
+        DependentUpdateBehaviour updateBehavior2 = go.AddComponent<DependentUpdateBehaviour>();
+        updateBehavior.NotifyManager = notifyManager;
+        updateBehavior2.NotifyManager = notifyManager;
+        updateBehavior.ItemToTrigger = updateBehavior2;
+        updateBehavior.TriggerUpdate();
+        yield return null;
+        Assert.That(updateBehavior.TestValue, Is.EqualTo(42));
+        Assert.That(updateBehavior2.TestValue, Is.EqualTo(42));
+    }
+    
+    [Test]
+    public void TestUnsafeIterations()
+    {
+        GameObject goManager = new GameObject();
+        NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
+
+        GameObject go = new GameObject();
+        DependentUpdateBehaviour updateBehavior = go.AddComponent<DependentUpdateBehaviour>();
+        DependentUpdateBehaviour updateBehavior2 = go.AddComponent<DependentUpdateBehaviour>();
+        updateBehavior.NotifyManager = notifyManager;
+        updateBehavior2.NotifyManager = notifyManager;
+        //circular loop
+        updateBehavior.ItemToTrigger = updateBehavior2;
+        updateBehavior2.ItemToTrigger = updateBehavior;
+        updateBehavior.TriggerUpdate();
+        
+        Assert.Throws<Exception>(notifyManager.NotifyObservers);
+        
+        
+    }
+
 }

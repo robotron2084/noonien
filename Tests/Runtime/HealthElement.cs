@@ -1,5 +1,4 @@
 ﻿using com.enemyhideout.soong;
-using DefaultNamespace;
 
 namespace Tests.Runtime
 {
