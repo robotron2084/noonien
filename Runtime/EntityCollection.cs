@@ -10,12 +10,18 @@ namespace com.enemyhideout.soong
 
     private List<DataEntity> _children = new List<DataEntity>();
     private INotifyManager _notifyManager;
-    private Observable<EntityCollection> _observable;
+    private Observable<IEntityCollection> _observable;
 
     public EntityCollection(INotifyManager notifyManager)
     {
       _notifyManager = notifyManager;
-      _observable = new Observable<EntityCollection>(this, _notifyManager);
+      _observable = new Observable<IEntityCollection>(this, _notifyManager);
+    }
+
+    public void InsertChild(int index, DataEntity entity)
+    {
+      _children.Insert(index, entity);
+      _observable.MarkDirty();
     }
 
     public void AddChild(DataEntity entity)
@@ -30,12 +36,12 @@ namespace com.enemyhideout.soong
       _observable.MarkDirty();
     }
     
-    public void RemoveObserver(IDataObserver<EntityCollection> element)
+    public void RemoveObserver(IDataObserver<IEntityCollection> element)
     {
       _observable.RemoveObserver(element);
     }
 
-    public void AddObserver(IDataObserver<EntityCollection> element)
+    public void AddObserver(IDataObserver<IEntityCollection> element)
     {
       _observable.AddObserver(element);
     }
@@ -66,5 +72,10 @@ namespace com.enemyhideout.soong
     }
 
     int Count { get; }
+
+    void RemoveObserver(IDataObserver<IEntityCollection> element);
+
+    void AddObserver(IDataObserver<IEntityCollection> element);
+
   }
 }

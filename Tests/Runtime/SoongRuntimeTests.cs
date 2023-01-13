@@ -9,6 +9,14 @@ using UnityEngine.TestTools;
 
 public class SoongRuntimeTests
 {
+    private INotifyManager _notifyManager;
+    [SetUp]
+    public void OneTimeSetup()
+    {
+        GameObject goManager = new GameObject();
+        _notifyManager = goManager.AddComponent<NotifyManager>();
+    }
+    
     // A Test behaves as an ordinary method
     [Test]
     public void SoongRuntimeTestsSimplePasses()
@@ -65,9 +73,7 @@ public class SoongRuntimeTests
     [UnityTest]
     public IEnumerator TestNotify()
     {
-        GameObject goManager = new GameObject();
-        NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
-        DataEntity entity = new DataEntity(notifyManager);
+        DataEntity entity = new DataEntity(_notifyManager);
         HealthElement health = new HealthElement(entity);
 
         health.Health = 10;
@@ -77,11 +83,10 @@ public class SoongRuntimeTests
         var healthObserver = go.AddComponent<HealthObserver>();
 
         dataSource.Entity = entity;
-        // healthObserver won't initialize until start, so let's wait.
-        yield return null;
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
 
         health.Health = 9;
+        Assert.That(healthObserver.ObservedHealth, Is.Not.EqualTo(health.Health));
         yield return null;
         Assert.That(healthObserver.ObservedHealth, Is.EqualTo(health.Health));
 
@@ -107,14 +112,11 @@ public class SoongRuntimeTests
     [UnityTest]
     public IEnumerator TestTwoIterations()
     {
-        GameObject goManager = new GameObject();
-        NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
-
         GameObject go = new GameObject();
         DependentUpdateBehaviour updateBehavior = go.AddComponent<DependentUpdateBehaviour>();
         DependentUpdateBehaviour updateBehavior2 = go.AddComponent<DependentUpdateBehaviour>();
-        updateBehavior.NotifyManager = notifyManager;
-        updateBehavior2.NotifyManager = notifyManager;
+        updateBehavior.NotifyManager = _notifyManager;
+        updateBehavior2.NotifyManager = _notifyManager;
         updateBehavior.ItemToTrigger = updateBehavior2;
         updateBehavior.TriggerUpdate();
         yield return null;
@@ -125,22 +127,57 @@ public class SoongRuntimeTests
     [Test]
     public void TestUnsafeIterations()
     {
-        GameObject goManager = new GameObject();
-        NotifyManager notifyManager = goManager.AddComponent<NotifyManager>();
-
         GameObject go = new GameObject();
         DependentUpdateBehaviour updateBehavior = go.AddComponent<DependentUpdateBehaviour>();
         DependentUpdateBehaviour updateBehavior2 = go.AddComponent<DependentUpdateBehaviour>();
-        updateBehavior.NotifyManager = notifyManager;
-        updateBehavior2.NotifyManager = notifyManager;
+        updateBehavior.NotifyManager = _notifyManager;
+        updateBehavior2.NotifyManager = _notifyManager;
         //circular loop
         updateBehavior.ItemToTrigger = updateBehavior2;
         updateBehavior2.ItemToTrigger = updateBehavior;
         updateBehavior.TriggerUpdate();
         
-        Assert.Throws<Exception>(notifyManager.NotifyObservers);
+        Assert.Throws<Exception>(_notifyManager.NotifyObservers);
+    }
+
+    [UnityTest]
+    public IEnumerator TestCollectionObserving()
+    {
+        DataEntity parent = new DataEntity(_notifyManager, "Parent");
+        new CollectionElement(parent);
+        for (int i = 0; i < 5; i++)
+        {
+            var child = new DataEntity(_notifyManager);
+            parent.AddChild(child);
+        }
+
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<EntitySource>();
+        var collectionCounter = go.AddComponent<CollectionCounter>();
+        dataSource.Entity = parent;
         
+        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
+        yield return null;
+        var newChild = new DataEntity(_notifyManager);
         
+        parent.AddChild(newChild);
+        Assert.That(collectionCounter.ItemsCount, Is.Not.EqualTo(parent.ChildrenCount));
+        yield return null;
+        Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(1));
+        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
+
+        newChild.RemoveParent();
+        Assert.That(collectionCounter.ItemsCount, Is.Not.EqualTo(parent.ChildrenCount));
+        yield return null;
+        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
+
+        var lastChild = parent.GetChildAt(parent.ChildrenCount - 1);
+        parent.InsertChild(0, lastChild);
+        yield return null;
+        Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(5));
+        
+        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
+
     }
 
 }

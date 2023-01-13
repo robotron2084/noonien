@@ -10,7 +10,7 @@ namespace com.enemyhideout.soong
   {
   }
 
-  public class ElementObserver<T> : ElementObserver, IEntityObserver where T : DataElement
+  public class ElementObserver<T> : ElementObserver where T : DataElement
   {
     // The element we're interested in. It is always assumed there is at least one element being looked at.
     protected T _element;
@@ -19,20 +19,33 @@ namespace com.enemyhideout.soong
     // The data source we use to query for the model.
     protected EntitySource _source;
     // A list of observers that listen to various elements. By default we just listen to one.
-    protected List<DataObserver<T>> _observers = new List<DataObserver<T>>();
+    protected List<DataElementObserver<T>> _observers = new List<DataElementObserver<T>>();
+    protected IEntityObserver _entityObserver;
 
     protected virtual void Awake()
     {
+      _entityObserver = new EntityObserver(EntityUpdated);
+      // initialize our observer to listen to the element type.
       Listen<T>(DataUpdated);
+      InitSource();
+    }
+
+    public void InitSource()
+    {
+      if (_source != null)
+      {
+        return;
+      }
+      _source = GetComponentInParent<EntitySource>();
+      if (_source != null)
+      {
+        _source.ObserveModel(_entityObserver);
+      }
     }
 
     protected virtual void Start()
     {
-      _source = GetComponentInParent<EntitySource>();
-      if (_source != null)
-      {
-        _source.ObserveModel(this);
-      }
+      InitSource();
     }
 
     public void EntityUpdated(DataEntity entity)
@@ -81,7 +94,7 @@ namespace com.enemyhideout.soong
 
     private void Listen<TDataElement>(Action<T> callback) where TDataElement : DataElement
     {
-      var observer = new DataObserver<T>(callback);
+      var observer = new DataElementObserver<T>(callback);
       _observers.Add(observer);
     }
 
@@ -97,7 +110,7 @@ namespace com.enemyhideout.soong
       Entity = null;
       if (_source != null)
       {
-        _source.RemoveObserver(this);
+        _source.RemoveObserver(_entityObserver);
       }
     }
   }

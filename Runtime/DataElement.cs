@@ -36,7 +36,6 @@ namespace com.enemyhideout.soong
       _observable.NotifyUpdated();
     }
 
-
     public void RemoveObserver(IDataObserver<DataElement> element)
     {
       _observable.RemoveObserver(element);

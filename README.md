@@ -6,11 +6,24 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 
 ![Noonien Soong](https://images.squarespace-cdn.com/content/v1/5cc3d1b051f4d40415789cc2/cc796e93-4fa2-4dee-a14d-059cd47d55fc/Noonien-Soong-data-brothers.jpg?format=1000w)
 
-TODO: 
-  * Entity Collections
+TODO
+
+  * Virtual Entity Collections
   * Docs
   * Helper functions for instantiation and collections.
   * GetElement<T> should handle subtypes/interfaces better?
+
+DONE
+
+  * Data Entities
+  * Data Elements
+  * Entity Collections
+  * Data Hierarchies
+  * Observables
+  * NotifyManager
+
+
+## Random Mumblings
 
 So I want two types of observable collections:
 

@@ -25,7 +25,7 @@ namespace com.enemyhideout.soong
         _entity = value;
         foreach (var modelObserver in _observations)
         {
-          modelObserver.EntityUpdated(_entity);
+          modelObserver.DataUpdated(_entity);
         }
       }
     }
@@ -37,7 +37,7 @@ namespace com.enemyhideout.soong
       _observations.Add(observer);
       if (_entity != null)
       {
-        observer.EntityUpdated(_entity);
+        observer.DataUpdated(_entity);
       }
     }
 

@@ -7,10 +7,23 @@ namespace com.enemyhideout.soong
     void DataUpdated(T instance);
   }
 
-  public class DataObserver<TElementSubClass> : IDataObserver<DataElement> where TElementSubClass: DataElement
+  public class DataObserver<T> : IDataObserver<T>
+  {
+    public DataObserver(Action<T> callback)
+    {
+      _callback = callback;
+    }
+    public Action<T> _callback;
+    public void DataUpdated(T instance)
+    {
+      _callback(instance);
+    }
+  }
+
+  public class DataElementObserver<TElementSubClass> : IDataObserver<DataElement> where TElementSubClass: DataElement
   {
     private Action<TElementSubClass> _callback;
-    public DataObserver(Action<TElementSubClass> callback)
+    public DataElementObserver(Action<TElementSubClass> callback)
     {
       _callback = callback;
     }
@@ -22,7 +35,7 @@ namespace com.enemyhideout.soong
       _callback((TElementSubClass)instance);
     }
 
-    public void RemoveObserver(DataObserver<TElementSubClass> dataObserver)
+    public void RemoveObserver(DataElementObserver<TElementSubClass> dataElementObserver)
     {
       Element.RemoveObserver(this);
       Element = null;

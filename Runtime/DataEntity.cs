@@ -32,28 +32,16 @@ namespace com.enemyhideout.soong
       {
         return _parent;
       }
-      set
-      {
-        if (_parent == value)
-        {
-          return;
-        }
-        if (_parent != null)
-        {
-          _parent.DetachChildInternal(this);
-        }
-        _parent = value;
-        if (_parent != null)
-        {
-          _parent.AttachChildInternal(this);
-        }
-
-      }
     }
 
     private Dictionary<Type, DataElement> _elementsMap = new Dictionary<Type, DataElement>();
 
-    
+    public override string ToString()
+    {
+      return $"[DataEntity {Name}]";
+    }
+
+
     /// <summary>
     /// Better than calling Children.Count because it won't alloc children.
     /// </summary>
@@ -90,20 +78,7 @@ namespace com.enemyhideout.soong
       _notifyManager = notifyManager;
       _name = name;
     }
-
-    public DataEntity(INotifyManager notifyManager, params DataElement[] elements)
-    {
-      _notifyManager = notifyManager;
-      _name = CreateName();
-      AddElementsInternal(_elementsMap, elements);
-    }
-
-    public DataEntity(INotifyManager notifyManager, string name, params DataElement[] elements)
-    {
-      _notifyManager = notifyManager;
-      AddElementsInternal(_elementsMap, elements);
-    }
-
+    
     private string _name;
     public string Name
     {
@@ -128,21 +103,60 @@ namespace com.enemyhideout.soong
       }
     }
 
-    public void AttachChildInternal(DataEntity entity)
+    public void InsertChild(int index, DataEntity child)
     {
-      if (entity.Parent != this)
+      if (child._parent != null)
+      {
+        child.RemoveParent();
+      }
+      child._parent = this;
+      InsertChildInternal(index, child);
+    }
+    
+    public void RemoveChild(DataEntity child)
+    {
+      if (child._parent == this)
+      {
+        DetachChildInternal(child);
+        child._parent = null;
+      }
+    }
+
+    public void AddChild(DataEntity child)
+    {
+      if (child._parent != null)
+      {
+        child.RemoveParent();
+      }
+      child._parent = this;
+      AttachChildInternal(child);
+    }
+    
+    private void InsertChildInternal(int index, DataEntity child)
+    {
+      if (child.Parent != this)
       {
         throw new Exception("Attempting to attach child to an entity who is not the parent. This method should only be called internally by children.");
       }
       LazyInitChildren();
-      _children.AddChild(entity);
+      _children.InsertChild(index, child);
+    }
+
+    private void AttachChildInternal(DataEntity child)
+    {
+      if (child.Parent != this)
+      {
+        throw new Exception("Attempting to attach child to an entity who is not the parent. This method should only be called internally by children.");
+      }
+      LazyInitChildren();
+      _children.AddChild(child);
     }
     
-    public void DetachChildInternal(DataEntity dataEntity)
+    private void DetachChildInternal(DataEntity dataEntity)
     {
       if (dataEntity.Parent != this)
       {
-        throw new Exception("Attempting to destach child from an entity who is not the parent.");
+        throw new Exception("Attempting to detach child from an entity who is not the parent.");
       }
       LazyInitChildren();
       _children.RemoveChild(dataEntity);
@@ -186,5 +200,12 @@ namespace com.enemyhideout.soong
       map[t] = element;
     }
 
+    public void RemoveParent()
+    {
+      if (_parent != null)
+      {
+        _parent.RemoveChild(this);
+      }
+    }
   }
 }
