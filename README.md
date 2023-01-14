@@ -8,13 +8,14 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 
 TODO
 
-  * Virtual Entity Collections
-  * Docs
-  * Helper functions for instantiation and collections.
   * GetElement<T> should handle subtypes/interfaces better?
+  * Docs
+  * Test Project
+  * Helper functions for instantiation and collections.
+  * Rename?
 
 DONE
-
+  * Virtual Entity Collections
   * Data Entities
   * Data Elements
   * Entity Collections
@@ -50,6 +51,13 @@ dataSource.Entity = parent;
 //add children to parent, and the element will update and notify.
 
 ```
+
 ```csharp
-ObserveCollection(new VirtualCollection(new List<DataEntity>(){  ... } ));
+// Virtual collection. We want some kind of virtual collections filtering.
+var sourceCollection = entity.Children;
+var collectionFilter = new CollectionFilter(x => x.Name.Contains("Fred"), sourceCollection);
+var virtualCollection = new VirtualEntityCollection(collectionFilter);
+
+var collectionElement = new CollectionElement();
+collectionElement.Collection = virtualCollection;
 ```

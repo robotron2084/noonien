@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using com.enemyhideout.soong;
 using NUnit.Framework;
 using Tests.Runtime;
@@ -178,6 +179,81 @@ public class SoongRuntimeTests
         
         Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
 
+    }
+
+    [UnityTest]
+    public IEnumerator TestCompositeCollection()
+    {
+        var parentA = new DataEntity( _notifyManager, "ParentA");
+        AddChildren(parentA, _notifyManager, 5);
+        var parentB = new DataEntity(_notifyManager, "ParentB");
+        AddChildren(parentB, _notifyManager, 5);
+        var composite = new CompositeEntityCollection(_notifyManager, parentA.Children, parentB.Children);
+
+        var collection = parentA.Children.Concat(parentB.Children);
+        Assert.That(composite, Is.EqualTo(collection));
+
+        parentA.RemoveChild(parentA.Children[0]);
+
+        collection = parentA.Children.Concat(parentB.Children);
+        Assert.That(composite, Is.Not.EqualTo(collection));
+
+        yield return null;
+        Assert.That(composite, Is.EqualTo(collection));
+
+
+    }
+
+    
+    [Test]
+    public void TestFilterCollection()
+    {
+        var parentA = new DataEntity( _notifyManager, "ParentA");
+        AddChildren(parentA, _notifyManager, 5);
+        var filtered = new FilteredEntityCollection(x => x.Where(y => y.Name.Contains("2")), parentA.Children, _notifyManager);
+        List<DataEntity> items = new List<DataEntity>() { parentA.Children[2] };
+        Assert.That(filtered, Is.EqualTo(items));
+
+        var anotherChild = new DataEntity(_notifyManager, "2 Fast 2 Furious");
+        parentA.AddChild(anotherChild);
+        items = new List<DataEntity>() { parentA.Children[2], anotherChild };
+
+        Assert.That(filtered, Is.Not.EqualTo(items));
+        _notifyManager.NotifyObservers();
+        Assert.That(filtered, Is.EqualTo(items));
+
+    }
+
+    
+    [Test]
+    public void TestFilteredAndCompositedCollection()
+    {
+        var parentA = new DataEntity( _notifyManager, "ParentA");
+        AddChildren(parentA, _notifyManager, 5);
+        var parentB = new DataEntity( _notifyManager, "ParentB");
+        AddChildren(parentB, _notifyManager, 5);
+        var filtered = new FilteredEntityCollection(x => x.Where(y => y.Name.Contains("2")), parentA.Children, _notifyManager);
+        var composite = new CompositeEntityCollection(_notifyManager, filtered, parentB.Children);
+
+        
+        List<DataEntity> items = new List<DataEntity>() { parentA.Children[2] };
+        items.AddRange(parentB.Children);
+        Assert.That(composite, Is.EqualTo(items));
+        var anotherChild = new DataEntity(_notifyManager, "2 Fast 2 Furious");
+        parentA.AddChild(anotherChild);
+        _notifyManager.NotifyObservers();
+        items = new List<DataEntity>() { parentA.Children[2] , anotherChild };
+        items.AddRange(parentB.Children);
+        Assert.That(composite, Is.EqualTo(items));
+
+    }
+
+    private static void AddChildren(DataEntity parent, INotifyManager notifyManager, int numChildren)
+    {
+        for (int i = 0; i < numChildren; i++)
+        {
+            parent.AddChild(new DataEntity(notifyManager, $"Child {i}"));
+        }
     }
 
 }

@@ -8,9 +8,9 @@ namespace com.enemyhideout.soong
   public class EntityCollection : IEntityCollection
   {
 
-    private List<DataEntity> _children = new List<DataEntity>();
-    private INotifyManager _notifyManager;
-    private Observable<IEntityCollection> _observable;
+    protected List<DataEntity> _children = new List<DataEntity>();
+    protected INotifyManager _notifyManager;
+    protected Observable<IEntityCollection> _observable;
 
     public EntityCollection(INotifyManager notifyManager)
     {
@@ -21,19 +21,19 @@ namespace com.enemyhideout.soong
     public void InsertChild(int index, DataEntity entity)
     {
       _children.Insert(index, entity);
-      _observable.MarkDirty();
+      MarkDirty();
     }
 
     public void AddChild(DataEntity entity)
     {
       _children.Add(entity);
-      _observable.MarkDirty();
+      MarkDirty();
     }
 
     public void RemoveChild(DataEntity dataEntity)
     {
       _children.Remove(dataEntity);
-      _observable.MarkDirty();
+      MarkDirty();
     }
     
     public void RemoveObserver(IDataObserver<IEntityCollection> element)
@@ -60,6 +60,11 @@ namespace com.enemyhideout.soong
     public int Count
     {
       get => _children.Count;
+    }
+
+    public void MarkDirty()
+    {
+      _observable.MarkDirty();
     }
 
   }
