@@ -116,8 +116,18 @@ namespace com.enemyhideout.soong.tests
             // addition of elements! Not sure if I care?
             var retVal = entity.GetElement<SuperClassElement>();
             Assert.That(retVal, Is.EqualTo(subElement));
+        }
+        
+        [Test]
+        public void TestGetElementInterface()
+        {
+            var entity = new DataEntity(null);
+            var element = new InterfaceElement(entity);
+            var retVal = entity.GetElement<IElement>();
+            Assert.That(retVal, Is.EqualTo(element));
             
         }
+
 
     }
 }

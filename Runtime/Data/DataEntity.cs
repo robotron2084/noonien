@@ -163,11 +163,12 @@ namespace com.enemyhideout.soong
       _children.RemoveChild(dataEntity);
     }
 
-    public T GetElement<T>() where T : DataElement
+    public T GetElement<T>() where T : class
     {
-      return (T)_elementsMap[typeof(T)];
+      var dataElement = _elementsMap[typeof(T)];
+      return dataElement as T;
     }
-
+    
     public void AddElement(DataElement element)
     {
       AddElementInternal(_elementsMap, element, _typeCache);
