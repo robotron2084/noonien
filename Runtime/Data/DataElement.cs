@@ -4,8 +4,9 @@ using System.Linq;
 
 namespace com.enemyhideout.soong
 {
-  public class DataElement
+  public abstract class DataElement
   {
+
     private DataEntity _parent;
 
     public DataEntity Parent

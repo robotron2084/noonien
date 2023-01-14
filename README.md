@@ -8,13 +8,13 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 
 TODO
 
-  * GetElement<T> should handle subtypes/interfaces better?
   * Docs
   * Test Project
   * Helper functions for instantiation and collections.
   * Rename?
 
 DONE
+  * GetElement<T> should handle subtypes/interfaces better.
   * Virtual Entity Collections
   * Data Entities
   * Data Elements

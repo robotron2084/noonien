@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using com.enemyhideout.soong;
 using NUnit.Framework;
+using Tests.Runtime;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -26,8 +27,9 @@ namespace com.enemyhideout.soong.tests
         public void TestAddElement()
         {
             DataEntity entity = new DataEntity(null);
-            new DataElement(entity);
+            var element = new SuperClassElement(entity);
             Assert.That(entity.ElementsCount, Is.EqualTo(1));
+            Assert.That(element.Parent, Is.EqualTo(entity));
         }
 
         [Test]
@@ -70,5 +72,52 @@ namespace com.enemyhideout.soong.tests
             Assert.That(parent.Children[0], Is.EqualTo(child2));
 
         }
+
+        [Test]
+        public void TestGetElementSuperClass()
+        {
+            var entity = new DataEntity(null);
+            var subElement = new SubClassElement(entity);
+
+            var retVal = entity.GetElement<SuperClassElement>();
+            Assert.That(retVal, Is.EqualTo(subElement));
+        }
+
+        [Test]
+        public void TestGetElementSubClass()
+        {
+            var entity = new DataEntity(null);
+            var subElement = new SubClassElement(entity);
+
+            var retVal = entity.GetElement<SubClassElement>();
+            Assert.That(retVal, Is.EqualTo(subElement));
+        }
+        
+        [Test]
+        public void TestGetElementSubClassMixed()
+        {
+            var entity = new DataEntity(null);
+            var subElement = new SubClassElement(entity);
+            var superElement = new SuperClassElement(entity);
+            
+            var retVal = entity.GetElement<SuperClassElement>();
+            Assert.That(retVal, Is.EqualTo(superElement));
+            
+        }
+
+        [Test]
+        public void TestGetElementSubClassMixedOrder2()
+        {
+            var entity = new DataEntity(null);
+            var superElement = new SuperClassElement(entity);
+            var subElement = new SubClassElement(entity);
+
+            // An odd and perhaps benign issue: it is not possible to gain access to SuperClass due to the order of 
+            // addition of elements! Not sure if I care?
+            var retVal = entity.GetElement<SuperClassElement>();
+            Assert.That(retVal, Is.EqualTo(subElement));
+            
+        }
+
     }
 }

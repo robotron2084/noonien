@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using com.enemyhideout.soong.Reflection;
 using UnityEngine;
 
 namespace com.enemyhideout.soong
 {
   public class DataEntity
   {
+    private static TypeCache<DataElement> _typeCache = new TypeCache<DataElement>();
     private readonly INotifyManager _notifyManager;
 
     public INotifyManager NotifyManager => _notifyManager;
@@ -15,7 +17,6 @@ namespace com.enemyhideout.soong
     public static string LogTag = "Soong";
 
     private EntityCollection _children;
-
     public IEntityCollection Children
     {
       get
@@ -164,12 +165,12 @@ namespace com.enemyhideout.soong
 
     public T GetElement<T>() where T : DataElement
     {
-      return (T)_elementsMap[typeof(T)]; // todo: handle subtypes, maybe we need to iterate over this as a list.
+      return (T)_elementsMap[typeof(T)];
     }
 
     public void AddElement(DataElement element)
     {
-      AddElementInternal(_elementsMap, element);
+      AddElementInternal(_elementsMap, element, _typeCache);
     }
 
     public static string CreateName()
@@ -179,25 +180,24 @@ namespace com.enemyhideout.soong
 
     private static void AddElementsInternal(
       Dictionary<Type, DataElement> map, 
-      IEnumerable<DataElement> newElements)
+      IEnumerable<DataElement> newElements,
+      TypeCache<DataElement> typeCache)
     {
       foreach (var dataElement in newElements)
       {
-        AddElementInternal(map, dataElement);
+        AddElementInternal(map, dataElement, typeCache);
       }
     }
 
-    private static void AddElementInternal(
-      Dictionary<Type, DataElement> map,
-      DataElement element)
+    private static void AddElementInternal(Dictionary<Type, DataElement> map,
+      DataElement element, 
+      TypeCache<DataElement> typeCache)
     {
-      var t = element.GetType();
-      if (map.ContainsKey(t))
+      IEnumerable<Type> types = typeCache.GetTypes(element.GetType());
+      foreach (var type in types)
       {
-        _logger.LogError(LogTag, $"{t.ToString()} is already registered on model {element.Name}");
-        return;
+        map[type] = element;
       }
-      map[t] = element;
     }
 
     public void RemoveParent()
