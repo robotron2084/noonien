@@ -14,5 +14,12 @@
     "name": "Chris Hill",
     "email": "chris@enemyhideout.com",
     "url": "https://www.enemyhideout.com"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Pong Game Example",
+      "description": "A small game project showing how to build, bind, and observe data hierarchies.",
+      "path": "Samples~/PongSample"
+    }
+  ]
 }
