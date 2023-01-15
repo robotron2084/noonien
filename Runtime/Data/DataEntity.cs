@@ -73,11 +73,21 @@ namespace com.enemyhideout.soong
       _notifyManager = notifyManager;
       _name = CreateName();
     }
+    
+    public DataEntity(INotifyManager notifyManager, DataEntity parent) : this(notifyManager)
+    {
+      parent.AddChild(this);
+    }
 
     public DataEntity(INotifyManager notifyManager, string name)
     {
       _notifyManager = notifyManager;
       _name = name;
+    }
+
+    public DataEntity(INotifyManager notifyManager, string name, DataEntity parent) : this(notifyManager, name)
+    {
+      parent.AddChild(this);
     }
     
     private string _name;
@@ -125,6 +135,10 @@ namespace com.enemyhideout.soong
 
     public void AddChild(DataEntity child)
     {
+      if (child == this)
+      {
+        throw new ArgumentException("Cannot add child to self.");
+      }
       if (child._parent != null)
       {
         child.RemoveParent();
