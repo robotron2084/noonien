@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6879560720660420114}
-  - component: {fileID: 2083482487699726486}
   - component: {fileID: 620184017633197419}
+  - component: {fileID: 3045530957104034623}
   m_Layer: 0
   m_Name: Paddle
   m_TagString: Untagged
@@ -34,18 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2083482487699726486
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6879560720660420115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58919f777b6d458f8b93187c7ed39195, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &620184017633197419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,6 +47,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cube: {fileID: 6879560720943941926}
+--- !u!114 &3045530957104034623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879560720660420115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7540357a2342d99fdc665aeac0dfe7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Query: 
 --- !u!1 &6879560720943941927
 GameObject:
   m_ObjectHideFlags: 0

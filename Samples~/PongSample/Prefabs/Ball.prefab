@@ -106,9 +106,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 400081140972041180}
-  - component: {fileID: 2487323625829097721}
   - component: {fileID: 2983465820508617399}
   - component: {fileID: 7958760237954104627}
+  - component: {fileID: 5181816821123517266}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -133,18 +133,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2487323625829097721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3355150625074937240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58919f777b6d458f8b93187c7ed39195, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2983465820508617399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,6 +159,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _renderer: {fileID: 1096944230617114670}
+--- !u!114 &5181816821123517266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3355150625074937240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7540357a2342d99fdc665aeac0dfe7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Query: Ball
 --- !u!1 &8840790980051344205
 GameObject:
   m_ObjectHideFlags: 0

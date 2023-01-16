@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using com.enemyhideout.soong;
 using NUnit.Framework;
+using Tests.Editor;
 using UnityEngine;
 
 namespace com.enemyhideout.soong.tests
@@ -16,17 +17,11 @@ namespace com.enemyhideout.soong.tests
       Assert.That( output, Is.EqualTo(testCase.Changes));
     }
 
-    public class ComputeDeltaTestCase
+    public class ComputeDeltaTestCase : TestBase
     {
-      public string Description;
       public List<object> Original;
       public List<object> NewList;
       public List<CollectionChange<object>> Changes;
- 
-      public override string ToString()
-      {
-        return Description;
-      }
     }
 
     public class TestObject

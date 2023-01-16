@@ -179,7 +179,8 @@ namespace com.enemyhideout.soong
 
     public T GetElement<T>() where T : class
     {
-      var dataElement = _elementsMap[typeof(T)];
+      DataElement dataElement = null;
+      _elementsMap.TryGetValue(typeof(T), out dataElement);
       return dataElement as T;
     }
     

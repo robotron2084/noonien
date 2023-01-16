@@ -125,8 +125,16 @@ namespace com.enemyhideout.soong.tests
             var element = new InterfaceElement(entity);
             var retVal = entity.GetElement<IElement>();
             Assert.That(retVal, Is.EqualTo(element));
-            
         }
+        
+        [Test]
+        public void TestGetElementThatDoesntExist()
+        {
+            var entity = new DataEntity(null);
+            var retVal = entity.GetElement<IElement>();
+            Assert.That(retVal, Is.Null);
+        }
+
 
 
     }

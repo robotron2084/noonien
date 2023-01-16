@@ -7,19 +7,17 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 ![Noonien Soong](https://images.squarespace-cdn.com/content/v1/5cc3d1b051f4d40415789cc2/cc796e93-4fa2-4dee-a14d-059cd47d55fc/Noonien-Soong-data-brothers.jpg?format=1000w)
 
 TODO
-
-  * Docs
-  * GetElementAt<> needs to return null if item not found.
-  * NamedEntitySource
-  * EntityManager that can query stuff.
   * Editor UI to view Entity Hierarchies.
+  * Docs
   * Inspector UI for EntitySource.
-  * Test Project
   * Helper functions for instantiation and collections.
   * More Samples
   * Rename?
 
 DONE
+  * EntityManager that can query stuff.
+  * NamedEntitySource
+  * GetElementAt<> needs to return null if item not found.
   * Created a small game sample. 
   * GetElement<T> should handle subtypes/interfaces better.
   * Virtual Entity Collections

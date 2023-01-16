@@ -10,34 +10,15 @@ using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
 {
-
-  private INotifyManager _notifyManager;
-
-  private DataEntity _root;
-
-  [SerializeField]
-  private EntitySource _ballSource;
-  [SerializeField]
-  private EntitySource _paddle1Source;
-  [SerializeField]
-  private EntitySource _paddle2Source;
-  [SerializeField]
-  private EntitySource _livesUIP1;
-  [SerializeField]
-  private EntitySource _livesUIP2;
-  [SerializeField]
-  private EntitySource _tableSource;
-  [SerializeField]
-  private EntitySource _gameOverUI;
-
-  [SerializeField] private float _paddleSpeed = 5.0f;
-
+  private float _paddleSpeed = 5.0f;
   private World _world;
   private Unit _ballUnit;
   private Unit _player1Unit;
   private Unit _player2Unit;
-  
-  
+  private float _ballSpeed = 10.0f;
+
+  public static EntityManager EntityManager { get; set; }
+
   /**
    *  DataEntity <-> GameObject
    *  DataElement <-> MonoBehaviour/Component for data
@@ -49,24 +30,22 @@ public class GameController : MonoBehaviour
    *      - Player Two
    *      +- PlayerElement - The number of lives.
    *      +- Unit - Location/Bounds/Velocity
-   *   | - Table - The field within which we're playing.
+   *   | - World - The field within which we're playing.
    *   | - Ball - The ball :) 
    * 
    */
 
-  private float _ballSpeed = 10.0f;
-
-  void Start()
+  void Awake()
   {
-
-    _notifyManager = GetComponent<NotifyManager>();
-    _root = new DataEntity(_notifyManager, "Root");
+    var notifyManager = GetComponent<NotifyManager>();
+    var root = new DataEntity(notifyManager, "Root");
+    EntityManager = new EntityManager(root);
     
-    var players = new DataEntity(_notifyManager, "Players", _root);
-    var player1 = MakePlayer(new Vector2(-5, 0), _paddleSpeed, "Player One", _notifyManager, players);
-    var player2 = MakePlayer(new Vector2(5, 0), _paddleSpeed, "Player Two", _notifyManager, players);
-    var ball = MakeBall(_ballSpeed, _notifyManager, _root);
-    var world = new DataEntity(_notifyManager, "Table", _root);
+    var players = root.AddNewChild("Players");
+    var player1 = MakePlayer(new Vector2(-5, 0), _paddleSpeed, "Player One", players);
+    var player2 = MakePlayer(new Vector2(5, 0), _paddleSpeed, "Player Two", players);
+    var ball = MakeBall(_ballSpeed, root);
+    var world = root.AddNewChild("World");
 
     _ballUnit = ball.GetElement<Unit>();
     _player1Unit = player1.GetElement<Unit>();
@@ -74,16 +53,29 @@ public class GameController : MonoBehaviour
 
     _world = new World(world);
     _world.Bounds = new Rect(new Vector2(-6,-3), new Vector2(6*2,3*2));
-
-    _ballSource.Entity = ball;
-    _paddle1Source.Entity = player1;
-    _livesUIP1.Entity = player1;
-    _paddle2Source.Entity = player2;
-    _livesUIP2.Entity = player2;
-    _tableSource.Entity = world;
-    _gameOverUI.Entity = world;
-    StartCoroutine(PlayGame());
     
+  }
+  
+  private static DataEntity MakePlayer(Vector2 position, float speed, string name, DataEntity parent)
+  {
+    var player = parent.AddNewChild(name);
+    new PlayerElement(player);
+    var unit = new Unit(new Rect(position, new Vector2(0.125f, 1f)), player);
+    unit.Velocity = new Vector2(0, Random.Range(0.5f * speed, speed));
+    return player;
+  }
+
+  private static DataEntity MakeBall(float ballSpeed, DataEntity root)
+  {
+    var ball = root.AddNewChild("Ball");
+    var _ballPosition = new Unit(new Rect(new Vector2(0, 0), new Vector2(0.125f, 0.125f)), ball);
+    _ballPosition.Velocity = new Vector2(Random.Range(0,ballSpeed), Random.Range(0,ballSpeed));
+    return ball;
+  }
+
+  void Start()
+  {
+    StartCoroutine(PlayGame());
   }
 
   private void ResetBoard()
@@ -99,26 +91,6 @@ public class GameController : MonoBehaviour
     _ballUnit.Alive = true;
   }
   
-  
-  
-  private static DataEntity MakePlayer(Vector2 position, float speed, string name, INotifyManager notifyManager, DataEntity parent)
-  {
-    var player = new DataEntity(notifyManager, name, parent);
-    new PlayerElement(player);
-    var unit = new Unit(new Rect(position, new Vector2(0.125f, 1f)), player);
-    unit.Velocity = new Vector2(0, Random.Range(0.5f * speed, speed));
-    return player;
-  }
-
-  private static DataEntity MakeBall(float ballSpeed, INotifyManager notifyManager, DataEntity root)
-  {
-    var ball = new DataEntity(notifyManager, "Ball", root);
-    var _ballPosition = new Unit(new Rect(new Vector2(0, 0), new Vector2(0.125f, 0.125f)), ball);
-    _ballPosition.Velocity = new Vector2(Random.Range(0,ballSpeed), Random.Range(0,ballSpeed));
-    return ball;
-  }
-
-
   IEnumerator PlayGame()
   {
     while (true)
@@ -132,27 +104,22 @@ public class GameController : MonoBehaviour
       HandleBallPlayerInteraction(_ballUnit, _player1Unit.Bounds);
       HandleBallPlayerInteraction(_ballUnit, _player2Unit.Bounds);
       
-      
       //calculate the bounds to use for checking if we've won.
-
       Rect legalBounds = _world.Bounds;
       legalBounds.width -= 1.5f;
       legalBounds.center = Vector2.zero;
       if (!legalBounds.Overlaps(_ballUnit.Bounds))
       {
-        Debug.Log($"LOST {legalBounds}, ball:{_ballUnit.Bounds}");
         yield return LoseLife();
         yield break;
       }
 
       yield return null;
     }
-    
   }
 
   private IEnumerator LoseLife()
   {
-    
     var losingUnit = _ballUnit.Position.x > 0 ? _player2Unit : _player1Unit;
     var loser = losingUnit.Parent.GetElement<PlayerElement>();
     loser.Lives--;
@@ -191,6 +158,7 @@ public class GameController : MonoBehaviour
       ballUnit.Velocity = new Vector2(-velocity.x, velocity.y);
     }
   }
+  
   private static void UpdatePlayerPosition(Unit player, float deltaTime, Vector2 ballPosition)
   {
     var pos = player.Position;
