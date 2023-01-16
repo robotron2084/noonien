@@ -36,6 +36,12 @@ namespace com.enemyhideout.soong
     }
 
     private Dictionary<Type, DataElement> _elementsMap = new Dictionary<Type, DataElement>();
+    private List<DataElement> _elements = new List<DataElement>();
+
+    public IReadOnlyCollection<DataElement> Elements
+    {
+      get => _elements;
+    }
 
     public override string ToString()
     {
@@ -186,7 +192,7 @@ namespace com.enemyhideout.soong
     
     public void AddElement(DataElement element)
     {
-      AddElementInternal(_elementsMap, element, _typeCache);
+      AddElementInternal(_elementsMap, element, _typeCache, _elements);
     }
 
     public static string CreateName()
@@ -197,23 +203,25 @@ namespace com.enemyhideout.soong
     private static void AddElementsInternal(
       Dictionary<Type, DataElement> map, 
       IEnumerable<DataElement> newElements,
-      TypeCache<DataElement> typeCache)
+      TypeCache<DataElement> typeCache,
+      List<DataElement> elements)
     {
       foreach (var dataElement in newElements)
       {
-        AddElementInternal(map, dataElement, typeCache);
+        AddElementInternal(map, dataElement, typeCache, dataElements: elements);
       }
     }
 
     private static void AddElementInternal(Dictionary<Type, DataElement> map,
-      DataElement element, 
-      TypeCache<DataElement> typeCache)
+      DataElement element,
+      TypeCache<DataElement> typeCache, List<DataElement> dataElements)
     {
       IEnumerable<Type> types = typeCache.GetTypes(element.GetType());
       foreach (var type in types)
       {
         map[type] = element;
       }
+      dataElements.Add(element);
     }
 
     public void RemoveParent()

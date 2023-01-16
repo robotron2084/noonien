@@ -8,9 +8,11 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 
 TODO
   * Editor UI to view Entity Hierarchies.
+  * Use Roslyn to generate data properties.
   * Docs
   * Inspector UI for EntitySource.
   * Helper functions for instantiation and collections.
+  * Events bus Element? Something that would queue events on the element, that other elements could then fast-forward to? 
   * More Samples
   * Rename?
 
