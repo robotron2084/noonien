@@ -2,6 +2,7 @@
 {
   public class EntityManager
   {
+
     public DataEntity Root;
 
     public EntityManager(DataEntity root)
