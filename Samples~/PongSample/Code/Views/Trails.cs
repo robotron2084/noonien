@@ -13,7 +13,7 @@ namespace Code.Views
     {
       base.DataUpdated(instance);
       _renderer.enabled = instance.Alive;
-      if (!instance.Alive)
+      if (instance.HasEvent(Unit.KilledEventId))
       {
         _renderer.Clear();
       }

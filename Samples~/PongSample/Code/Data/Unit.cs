@@ -6,6 +6,8 @@ namespace Code.Data
 {
   public class Unit : DataElement
   {
+    public const string KilledEventId = "Killed";
+    
     private bool _alive = true;
 
     public bool Alive
@@ -16,6 +18,11 @@ namespace Code.Data
       }
       set
       {
+        if (_alive && value == false)
+        {
+          //We've been killed this frame! Enqueue a Killed event.
+          EnqueueEvent(new DataEvent(KilledEventId));
+        }
         SetProperty(value, ref _alive);
       }
     }
@@ -65,5 +72,6 @@ namespace Code.Data
     {
       _bounds = bounds;
     }
+
   }
 }
