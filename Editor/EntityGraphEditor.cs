@@ -32,8 +32,8 @@ namespace com.enemyhideout.soong.editor
       new DataEntity(null),
     };
 
-    private List<DataEntity> _graph = null;
-    public List<DataEntity> Graph
+    private static List<DataEntity> _graph = null;
+    public static List<DataEntity> Graph
     {
       get
       {
@@ -42,21 +42,25 @@ namespace com.enemyhideout.soong.editor
       set
       {
         _graph = value;
-        _listView.itemsSource = _graph;
+        if (instance != null)
+        {
+          instance._listView.itemsSource = _graph;
+        }
       }
     }
-
+    
     private IMGUIContainer _entityInfo;
 
     private ListView _listView;
     private void CreateGUI()
     {
+      Debug.Log("CreateGUI setting instance!");
       instance = this;
       uxml.CloneTree(rootVisualElement);
       _listView = rootVisualElement.Q<ListView>();
       _entityInfo = rootVisualElement.Q<IMGUIContainer>();
       _entityInfo.onGUIHandler = OnEntityOnGUI;
-      Graph = TestEntities;
+      _listView.itemsSource = _graph;
       _listView.makeItem = () => new Label();
       _listView.bindItem = ((element, i) => (element as Label).text = _graph[i].Name);
       _listView.onSelectionChange += OnEntitySelectionChange;
