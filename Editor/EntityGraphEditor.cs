@@ -54,7 +54,6 @@ namespace com.enemyhideout.soong.editor
     private ListView _listView;
     private void CreateGUI()
     {
-      Debug.Log("CreateGUI setting instance!");
       instance = this;
       uxml.CloneTree(rootVisualElement);
       _listView = rootVisualElement.Q<ListView>();

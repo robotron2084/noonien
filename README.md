@@ -7,16 +7,17 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 ![Noonien Soong](https://images.squarespace-cdn.com/content/v1/5cc3d1b051f4d40415789cc2/cc796e93-4fa2-4dee-a14d-059cd47d55fc/Noonien-Soong-data-brothers.jpg?format=1000w)
 
 TODO
-  * Editor UI to view Entity Hierarchies.
-  * Use Roslyn to generate data properties.
   * Docs
-  * Inspector UI for EntitySource.
   * Helper functions for instantiation and collections.
-  * Events bus Element? Something that would queue events on the element, that other elements could then fast-forward to? 
+  * Events Bus? Something that would queue events on the element, that other elements could then listen for that are transient? 
   * More Samples
+    * Rigid Body Based game.
+    * Shop
   * Rename?
 
 DONE
+  * Editor UI to view Entity Hierarchies.
+  * Inspector UI for EntitySource.
   * EntityManager that can query stuff.
   * NamedEntitySource
   * GetElementAt<> needs to return null if item not found.
