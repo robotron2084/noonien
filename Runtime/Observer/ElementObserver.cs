@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using com.enemyhideout.soong;
-using PlasticGui.Diff.Annotate;
 using UnityEngine;
 
 namespace com.enemyhideout.soong

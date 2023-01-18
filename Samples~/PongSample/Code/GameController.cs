@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Code.Data;
-using Codice.CM.WorkspaceServer.Tree.GameUI.Checkin.Updater;
 using com.enemyhideout.soong;
+
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -38,24 +38,31 @@ public class GameController : MonoBehaviour
   void Awake()
   {
     var notifyManager = GetComponent<NotifyManager>();
-    var root = new DataEntity(notifyManager, "Root");
-    EntityManager = new EntityManager(root);
+    Root = new DataEntity(notifyManager, "Root");
+
+    EntityManager = new EntityManager(Root);
     
-    var players = root.AddNewChild("Players");
+    var players = Root.AddNewChild("Players");
     var player1 = MakePlayer(new Vector2(-5, 0), _paddleSpeed, "Player One", players);
     var player2 = MakePlayer(new Vector2(5, 0), _paddleSpeed, "Player Two", players);
-    var ball = MakeBall(_ballSpeed, root);
-    var world = root.AddNewChild("World");
+    var ball = MakeBall(_ballSpeed, Root);
+    var world = Root.AddNewChild("World");
+    _world = new World(world);
+    _world.Bounds = new Rect(new Vector2(-6,-3), new Vector2(6*2,3*2));
 
     _ballUnit = ball.GetElement<Unit>();
     _player1Unit = player1.GetElement<Unit>();
     _player2Unit = player2.GetElement<Unit>();
 
-    _world = new World(world);
-    _world.Bounds = new Rect(new Vector2(-6,-3), new Vector2(6*2,3*2));
+#if UNITY_EDITOR
+    com.enemyhideout.soong.editor.EntityGraphEditor.Graph = Root.NormalizeEntities();
+#endif
+
     
   }
-  
+
+  public static DataEntity Root { get; set; }
+
   private static DataEntity MakePlayer(Vector2 position, float speed, string name, DataEntity parent)
   {
     var player = parent.AddNewChild(name);
@@ -75,8 +82,11 @@ public class GameController : MonoBehaviour
 
   void Start()
   {
+
     StartCoroutine(PlayGame());
   }
+  
+  
 
   private void ResetBoard()
   {
