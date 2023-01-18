@@ -16,6 +16,7 @@ TODO
   * Rename?
 
 DONE
+  * Added HelloEntity Sample.
   * Editor UI to view Entity Hierarchies.
   * Inspector UI for EntitySource.
   * EntityManager that can query stuff.

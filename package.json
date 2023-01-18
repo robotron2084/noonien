@@ -17,9 +17,16 @@
   },
   "samples": [
     {
+      "displayName": "Hello Entity",
+      "description": "The simplest example.",
+      "path": "Samples~/Soong.BasicExample"
+    },
+    {
       "displayName": "Pong Game Example",
       "description": "A small game project showing how to build, bind, and observe data hierarchies.",
       "path": "Samples~/PongSample"
     }
+    
+
   ]
 }
