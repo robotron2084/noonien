@@ -8,6 +8,7 @@ namespace com.enemyhideout.soong
   {
 
     private DataEntity _parent;
+    private EventBuffer _eventBuffer;
 
     public DataEntity Parent
     {
@@ -22,6 +23,7 @@ namespace com.enemyhideout.soong
       }
     }
     private Observable<DataElement> _observable;
+    private Observable<DataElement> _eventBufferObservable;
     private INotifyManager _notifyManager;
 
     public DataElement(DataEntity parent)
@@ -31,10 +33,40 @@ namespace com.enemyhideout.soong
       _observable = new Observable<DataElement>(this, _notifyManager);
       parent.AddElement(this);
     }
+
+    public void EnqueueEvent(DataEvent evt)
+    {
+      if (_eventBuffer == null)
+      {
+        _eventBuffer = new EventBuffer(_notifyManager);
+      }
+      _eventBuffer.EnqueueEvent(evt);
+    }
+    
+    public bool HasEvent(string id)
+    {
+      if (_eventBuffer == null)
+      {
+        return false;
+      }
+
+      return _eventBuffer.HasEvent(id);
+    }
+
+
+    public T EventForId<T>(string id) where T : DataEvent
+    {
+      if (_eventBuffer == null)
+      {
+        return null;
+      }
+      return _eventBuffer.EventForId<T>(id);
+    }
     
     public void NotifyUpdated()
     {
       _observable.NotifyUpdated();
+      _eventBufferObservable?.NotifyUpdated();
     }
 
     public void RemoveObserver(IDataObserver<DataElement> element)

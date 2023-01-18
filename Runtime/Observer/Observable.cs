@@ -7,6 +7,7 @@ namespace com.enemyhideout.soong
   {
     protected bool _dirty = false;
     protected INotifyManager _notifyManager;
+    protected int _queuePriority = 0;
     public abstract void MarkDirty();
   }
   
@@ -18,6 +19,13 @@ namespace com.enemyhideout.soong
     {
       _observered = observed;
       _notifyManager = notifyManager;
+    }
+    
+    public Observable(TObserved observed, INotifyManager notifyManager, int queuePriority)
+    {
+      _observered = observed;
+      _notifyManager = notifyManager;
+      _queuePriority = queuePriority;
     }
 
     private List<IDataObserver<TObserved>> _observers = new List<IDataObserver<TObserved>>();
@@ -37,7 +45,7 @@ namespace com.enemyhideout.soong
       if (!_dirty)
       {
         _dirty = true; // do not allow enqueuing.
-        _notifyManager?.EnqueueNotifier(NotifyUpdated);
+        _notifyManager?.EnqueueNotifier(NotifyUpdated, _queuePriority);
       }
     }
 

@@ -6,46 +6,74 @@ namespace com.enemyhideout.soong
 {
   public class NotifyManager : MonoBehaviour, INotifyManager
   {
-    private List<Action> _actions = new List<Action>();
-    private List<Action> _actionsSwp = new List<Action>();
+
+    public static int LateUpdate = 100;
+
+    private SortedDictionary<int, NotifyQueue> _queues = new SortedDictionary<int, NotifyQueue>();
+    
+    public class NotifyQueue
+    {
+      private List<Action> _actions = new List<Action>();
+      private List<Action> _actionsSwp = new List<Action>();
+      public void NotifyObservers()
+      {
+        int maxIterations = 10;
+        int iterations = 0;
+        while (_actions.Count > 0 && iterations < maxIterations)
+        {
+          DoNotify();
+          iterations++;
+        }
+
+        if (iterations == maxIterations && _actions.Count > 0)
+        {
+          throw new Exception("Too many iterations hit while notifying.");
+        }
+      }
+      
+      private void DoNotify()
+      {
+        var executingList = _actions;
+        _actions = _actionsSwp;
+        _actionsSwp = executingList;
+        foreach (var action in executingList)
+        {
+          action();
+        }
+        executingList.Clear();
+      }
+
+
+      public void Add(Action callback)
+      {
+        _actions.Add(callback);
+      }
+    }
+
 
     public void Update()
     {
       NotifyObservers();
     }
-        
+
+
     public void NotifyObservers()
     {
-      int maxIterations = 10;
-      int iterations = 0;
-      while (_actions.Count > 0 && iterations < maxIterations)
+      foreach (var queuesValue in _queues.Values)
       {
-        DoNotify();
-        iterations++;
-      }
-
-      if (iterations == maxIterations && _actions.Count > 0)
-      {
-        throw new Exception("Too many iterations hit while notifying.");
+        queuesValue.NotifyObservers();
       }
     }
 
-    private void DoNotify()
+    public void EnqueueNotifier(Action callback, int queuePriority=0)
     {
-      var executingList = _actions;
-      _actions = _actionsSwp;
-      _actionsSwp = executingList;
-      foreach (var action in executingList)
+      NotifyQueue queue = null;
+      if (!_queues.TryGetValue(queuePriority, out queue))
       {
-        action();
+        queue = new NotifyQueue();
+        _queues[queuePriority] = queue;
       }
-      executingList.Clear();
-    }
-    
-
-    public void EnqueueNotifier(Action callback)
-    {
-      _actions.Add(callback);
+      queue.Add(callback);
     }
 
   }

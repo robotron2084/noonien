@@ -8,14 +8,16 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 
 TODO
   * Docs
+  * Replace the inefficient Collection Delta class with events.
   * Helper functions for instantiation and collections.
-  * Events Bus? Something that would queue events on the element, that other elements could then listen for that are transient? 
   * More Samples
     * Rigid Body Based game.
     * Shop
   * Rename?
 
 DONE
+  * Added queuePriority to NotifyManager so we can have phases of updates.
+  * Events Bus? Something that would queue events on the element, that other elements could then listen for that are transient?
   * Added HelloEntity Sample.
   * Editor UI to view Entity Hierarchies.
   * Inspector UI for EntitySource.
