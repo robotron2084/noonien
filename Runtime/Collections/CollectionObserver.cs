@@ -9,7 +9,6 @@ namespace com.enemyhideout.soong
     private CollectionDelta<DataEntity> _delta;
     private Observable<IEntityCollection> _collectionObserver;
 
-
     protected override void DataAdded(CollectionElement instance)
     {
       base.DataAdded(instance);

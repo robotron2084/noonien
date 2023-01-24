@@ -14,6 +14,8 @@ TODO
     * Rigid Body Based game.
     * Shop
   * Rename?
+  * Rename DataElement to something else?
+  * Add an AddElement<T>() for adding DataElements.
 
 DONE
   * Added queuePriority to NotifyManager so we can have phases of updates.

@@ -25,8 +25,11 @@
       "displayName": "Pong Game Example",
       "description": "A small game project showing how to build, bind, and observe data hierarchies.",
       "path": "Samples~/PongSample"
+    },
+    {
+      "displayName": "Collection Example",
+      "description": "Shows how to work with collections of entities in a simple example.",
+      "path": "Samples~/Soong.CollectionExample"
     }
-    
-
   ]
 }
