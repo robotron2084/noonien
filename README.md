@@ -14,8 +14,9 @@ TODO
     * Rigid Body Based game.
     * Shop
   * Rename?
-  * Rename DataElement to something else?
+  * Rename DataEntity to DataNode? Nodes contain elements and other nodes.
   * Add an AddElement<T>() for adding DataElements.
+  * EntityCollection should extend an abstract collection of Collection<T>.
 
 DONE
   * Added queuePriority to NotifyManager so we can have phases of updates.
