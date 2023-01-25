@@ -55,7 +55,7 @@ public class GameController : MonoBehaviour
     _player2Unit = player2.GetElement<Unit>();
 
 #if UNITY_EDITOR
-    com.enemyhideout.soong.editor.EntityGraphEditor.Graph = Root.NormalizeEntities();
+    com.enemyhideout.soong.editor.EntityGraphEditor.Root = Root;
 #endif
 
     

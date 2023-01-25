@@ -23,64 +23,179 @@ namespace com.enemyhideout.soong.editor
       instance = wnd;
     }
 
-    private static List<DataEntity> TestEntities = new List<DataEntity>
-    {
-      new DataEntity(null),
-      new DataEntity(null),
-      new DataEntity(null),
-      new DataEntity(null),
-      new DataEntity(null),
-    };
-
-    private static List<DataEntity> _graph = null;
-    public static List<DataEntity> Graph
+    private static EntityManager _manager;
+    private static DataEntity _root = null;
+    public static DataEntity Root
     {
       get
       {
-        return _graph;
+        return _root;
       }
       set
       {
-        _graph = value;
+        _root = value;
+        _manager = new EntityManager(_root);
         if (instance != null)
         {
-          instance._listView.itemsSource = _graph;
+          instance.CurrentSelection = _root;
         }
+      }
+    }
+
+    private DataEntity _currentSelection;
+
+    public DataEntity CurrentSelection
+    {
+      get => _currentSelection;
+      set
+      {
+        _currentSelection = value;
+        UpdateSelection();
       }
     }
     
     private IMGUIContainer _entityInfo;
 
-    private ListView _listView;
+    
+    private ListView _siblingsView;
+    private List<DataEntity> _siblingsList;
+
+    private ListView _parentsView;
+    private List<DataEntity> _parentsList;
+
+    private ListView _childrenView;
+    private List<DataEntity> _childrenList;
+
+    private TextField _selectionPath;
+
+
     private void CreateGUI()
     {
       instance = this;
       uxml.CloneTree(rootVisualElement);
-      _listView = rootVisualElement.Q<ListView>();
+      _siblingsView = rootVisualElement.Q<ListView>("Siblings");
+      _parentsView = rootVisualElement.Q<ListView>("Parent");
+      _childrenView = rootVisualElement.Q<ListView>("Children");
+      _selectionPath = rootVisualElement.Q<TextField>("SelectionPath");
       _entityInfo = rootVisualElement.Q<IMGUIContainer>();
       _entityInfo.onGUIHandler = OnEntityOnGUI;
-      _listView.itemsSource = _graph;
-      _listView.makeItem = () => new Label();
-      _listView.bindItem = ((element, i) => (element as Label).text = _graph[i].Name);
-      _listView.onSelectionChange += OnEntitySelectionChange;
+      _siblingsView.makeItem = () => new Label();
+      _parentsView.makeItem = () => new Label();
+      _childrenView.makeItem = () => new Label();
+      _siblingsView.bindItem = ((element, i) => OnBindItem(element, i, _siblingsList));
+      _parentsView.bindItem = ((element, i) => OnBindItem(element, i, _parentsList));
+      _childrenView.bindItem = ((element, i) => OnBindItem(element, i, _childrenList));
+      _siblingsView.onSelectionChange += OnSiblingSelectionChange;
+      _childrenView.onSelectionChange += OnChildrenSelectionChange;
+      _parentsView.onSelectionChange += OnParentSelectionChange;
+      _selectionPath.RegisterCallback<ChangeEvent<string>>(OnSelectionPathChanged);
+      _currentSelection = _root;
+      UpdateSelection();
     }
 
-    private IEnumerable<DataEntity> _selection;
-
-    private void OnEntityOnGUI()
+    private void OnSelectionPathChanged(ChangeEvent<string> evt)
     {
-      if (_selection != null)
+      var entity = _manager.Find(evt.newValue);
+      if (entity != null)
       {
-        foreach (var dataEntity in _selection)
-        {
-          EntityEditorCore.EditorForEntity(dataEntity);
-        }
+        CurrentSelection = entity;
       }
     }
 
-    private void OnEntitySelectionChange(IEnumerable<object> selectedItems)
+    private void OnBindItem(VisualElement element, int index, List<DataEntity> dataSource)
     {
-      _selection = selectedItems.Cast<DataEntity>().ToList();
+      (element as Label).text = dataSource[index].Name;
     }
+
+    private void UpdateSelection()
+    {
+      DataEntity siblingSelection = null;
+      DataEntity _parentSelection = null;
+      DataEntity _childSelection = null;
+      if (_currentSelection != null)
+      {
+        siblingSelection = _currentSelection;
+        if (_currentSelection.Parent == null)
+        {
+          //root of hierarchy.
+          _siblingsList =  new List<DataEntity> { _currentSelection };
+          _parentsList = new List<DataEntity>();
+        }
+        else
+        {
+          _parentSelection = _currentSelection.Parent;
+          // there is a parent, get siblings.
+          _siblingsList = _currentSelection.Parent.Children.ToList();
+          if (_currentSelection.Parent.Parent != null)
+          {
+            _parentsList = _currentSelection.Parent.Parent.Children.ToList();
+          }
+          else
+          {
+            _parentsList = new List<DataEntity> { _currentSelection.Parent };
+          }
+        }
+
+        if (_currentSelection.ChildrenCount > 0)
+        {
+          _childrenList = _currentSelection.Children.ToList();
+        }
+        else
+        {
+          _childrenList = new List<DataEntity>();
+        }
+
+        _parentsView.itemsSource = _parentsList;
+        _childrenView.itemsSource = _childrenList;
+        _siblingsView.itemsSource = _siblingsList;
+        SetSelectedIndex(_siblingsView, siblingSelection, _siblingsList);
+        SetSelectedIndex(_childrenView, _childSelection, _childrenList);
+        SetSelectedIndex(_parentsView, _parentSelection, _parentsList);
+
+        _selectionPath.value = _currentSelection.GetPath();
+      }
+
+    }
+
+    private static void SetSelectedIndex(ListView listView, DataEntity item, List<DataEntity> dataSource)
+    {
+      int index = -1;
+      if (item != null)
+      {
+        index = dataSource.IndexOf(item);
+      }
+
+      listView.SetSelectionWithoutNotify(new int[]{ index });
+    }
+    
+    private void OnEntityOnGUI()
+    {
+      if (_currentSelection != null)
+      {
+        EntityEditorCore.EditorForEntity(_currentSelection);
+      }
+    }
+
+    private void OnSiblingSelectionChange(IEnumerable<object> selectedItems)
+    {
+      CurrentSelection = selectedItems.Cast<DataEntity>().FirstOrDefault();
+    }
+    
+    private void OnChildrenSelectionChange(IEnumerable<object> selectedItems)
+    {
+      CurrentSelection = selectedItems.Cast<DataEntity>().FirstOrDefault();
+    }
+    
+    private void OnParentSelectionChange(IEnumerable<object> selectedItems)
+    {
+      CurrentSelection = selectedItems.Cast<DataEntity>().FirstOrDefault();
+    }
+
+    public void Update()
+    {
+      Repaint();
+    }
+
+
   }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace com.enemyhideout.soong
 {
@@ -29,6 +30,24 @@ namespace com.enemyhideout.soong
       var child = new DataEntity(entity.NotifyManager, name, entity);
       entity.AddChild(child);
       return child;
+    }
+
+    public static string GetPath(this DataEntity entity)
+    {
+      StringBuilder sb = new StringBuilder();
+      var item = entity;
+      while (item != null)
+      {
+        string name = item.Name;
+        item = item.Parent;
+        sb.Insert(0,name);
+        if (item != null)
+        {
+          sb.Insert(0,".");
+        }
+      }
+
+      return sb.ToString();
     }
   }
 }

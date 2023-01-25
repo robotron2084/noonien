@@ -19,7 +19,15 @@
     {
       var entityTokens = query.Split(".");
       var searchItem = root;
-      var tokenIndex = 0;
+      if (searchItem.Name != entityTokens[0])
+      {
+        return null;
+      }
+      if (entityTokens.Length == 1)
+      {
+        return searchItem;
+      }
+      var tokenIndex = 1;
       int iteration = 0;
       int maxIterations = 10;
       while (true && iteration < maxIterations)

@@ -23,7 +23,7 @@ namespace com.enemyhideout.soong.tests
       Assert.That(output, Is.EqualTo(testCase.ExpectedValue));
     }
     
-    private static DataEntity singleChildRoot = new DataEntity(null,"root");
+    private static DataEntity singleChildRoot = new DataEntity(null,"Root");
 
     private static DataEntity rootFirstChild = singleChildRoot.AddNewChild("FirstChild");
     private static DataEntity rootSecondChild = singleChildRoot.AddNewChild("SecondChild");
@@ -36,7 +36,7 @@ namespace com.enemyhideout.soong.tests
       new FindTestCase
       {
         Description = "Only Child",
-        Query = "FirstChild",
+        Query = "Root.FirstChild",
         Root = singleChildRoot,
         ExpectedValue = singleChildRoot.Children[0]
       },
@@ -50,21 +50,21 @@ namespace com.enemyhideout.soong.tests
       new FindTestCase
       {
         Description = "GrandChild",
-        Query = "SecondChild.GrandChild",
+        Query = "Root.SecondChild.GrandChild",
         Root = singleChildRoot,
         ExpectedValue = secondGrandChild
       },
       new FindTestCase
       {
         Description = "GreatChild",
-        Query = "SecondChild.GrandChild.GreatChild",
+        Query = "Root.SecondChild.GrandChild.GreatChild",
         Root = singleChildRoot,
         ExpectedValue = greatGrandChild
       },
       new FindTestCase
       {
         Description = "Partially Invalid Query",
-        Query = "FirstChild.SecondChild",
+        Query = "Root.FirstChild.SecondChild",
         Root = singleChildRoot,
         ExpectedValue = null
       }
