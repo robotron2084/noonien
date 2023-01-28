@@ -12,5 +12,7 @@ namespace com.enemyhideout.soong
     int Count { get; }
 
     IReadOnlyCollection<CollectionChange<T>> GetChanges();
+    
+    void Clear();
   }
 }

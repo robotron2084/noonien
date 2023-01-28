@@ -196,6 +196,38 @@ public class SoongRuntimeTests
 
     }
     
+    
+    [UnityTest]
+    public IEnumerator TestCollectionClear()
+    {
+        DataEntity parent = new DataEntity(_notifyManager, "Parent");
+        new CollectionElement(parent);
+        for (int i = 0; i < 5; i++)
+        {
+            var child = new DataEntity(_notifyManager);
+            parent.AddChild(child);
+        }
+
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<EntitySource>();
+        var collectionCounter = go.AddComponent<CollectionCounter>();
+        dataSource.Entity = parent;
+        
+        yield return null;
+        Assert.That(collectionCounter.Items.Count, Is.EqualTo(parent.ChildrenCount));
+        var newChild = new DataEntity(_notifyManager);
+        
+        parent.Children.Clear();
+        Assert.That(parent.Children.Count, Is.EqualTo(0));
+        Assert.That(collectionCounter.Items, Is.Not.EqualTo(parent.Children));
+        yield return null;
+        Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(5));
+        Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
+        Assert.That(collectionCounter.Items.Count, Is.EqualTo(0));
+        
+
+    }
+    
     [UnityTest]
     public IEnumerator TestCollectionObservingAfterChangeEvents()
     {

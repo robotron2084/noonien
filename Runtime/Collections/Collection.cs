@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace com.enemyhideout.soong
 {
@@ -75,10 +76,18 @@ namespace com.enemyhideout.soong
       return _changes as IReadOnlyCollection<CollectionChange<T>>;
     }
 
+    public void Clear()
+    {
+      foreach (var child in _children.ToList())
+      {
+        RemoveChild(child);
+      }
+    }
+
     /// <summary>
     /// Clear our events out in LateUpdate.
     /// </summary>
-    private void Clear()
+    private void Reset()
     {
       _dirty = false;
       _changes.Clear();
@@ -107,7 +116,7 @@ namespace com.enemyhideout.soong
       if (!_dirty)
       {
         _dirty = true;
-        _notifyManager?.EnqueueNotifier(Clear, NotifyManager.LateUpdate);
+        _notifyManager?.EnqueueNotifier(Reset, NotifyManager.LateUpdate);
       }
     }
   }
