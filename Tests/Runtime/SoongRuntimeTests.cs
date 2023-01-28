@@ -125,8 +125,8 @@ public class SoongRuntimeTests
         Assert.That(updateBehavior2.TestValue, Is.EqualTo(42));
     }
     
-    [Test]
-    public void TestUnsafeIterations()
+    [UnityTest]
+    public IEnumerator TestUnsafeIterations()
     {
         GameObject go = new GameObject();
         DependentUpdateBehaviour updateBehavior = go.AddComponent<DependentUpdateBehaviour>();
@@ -139,6 +139,21 @@ public class SoongRuntimeTests
         updateBehavior.TriggerUpdate();
         
         Assert.Throws<Exception>(_notifyManager.NotifyObservers);
+        //note: leaving this test in this state will cause exceptions to be thrown
+        // and other tests to break seemingly randomly!
+        
+        // Ensure that the notifyManager clears out and can recover.
+        updateBehavior.TestValue = 0;
+        updateBehavior.TestValue = 0;
+        updateBehavior2.ItemToTrigger = null;
+        updateBehavior.TriggerUpdate();
+        yield return null;
+        Assert.That(updateBehavior.TestValue, Is.EqualTo(42));
+        Assert.That(updateBehavior2.TestValue, Is.EqualTo(42));
+
+        
+        
+        
     }
 
     [UnityTest]
@@ -157,29 +172,108 @@ public class SoongRuntimeTests
         var collectionCounter = go.AddComponent<CollectionCounter>();
         dataSource.Entity = parent;
         
-        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
         yield return null;
+        Assert.That(collectionCounter.Items.Count, Is.EqualTo(parent.ChildrenCount));
         var newChild = new DataEntity(_notifyManager);
         
         parent.AddChild(newChild);
-        Assert.That(collectionCounter.ItemsCount, Is.Not.EqualTo(parent.ChildrenCount));
+        Assert.That(collectionCounter.Items, Is.Not.EqualTo(parent.Children));
         yield return null;
         Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(1));
-        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
+        Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
 
         newChild.RemoveParent();
-        Assert.That(collectionCounter.ItemsCount, Is.Not.EqualTo(parent.ChildrenCount));
+        Assert.That(collectionCounter.Items, Is.Not.EqualTo(parent.Children));
         yield return null;
-        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
+        Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
 
         var lastChild = parent.GetChildAt(parent.ChildrenCount - 1);
         parent.InsertChild(0, lastChild);
         yield return null;
-        Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(5));
+        Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(2));
         
-        Assert.That(collectionCounter.ItemsCount, Is.EqualTo(parent.ChildrenCount));
+        Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
 
     }
+    
+    [UnityTest]
+    public IEnumerator TestCollectionObservingAfterChangeEvents()
+    {
+        DataEntity parent = new DataEntity(_notifyManager, "Parent");
+        new CollectionElement(parent);
+        for (int i = 0; i < 5; i++)
+        {
+            var child = new DataEntity(_notifyManager);
+            parent.AddChild(child);
+        }
+
+        // this is the key change from the above: the 'collection changes' have 
+        // occurred, but we still want some kind of CollectionUpdated to occur
+        // so that the CollectionCounter correctly gets initialized.
+        yield return null;
+
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<EntitySource>();
+        var collectionCounter = go.AddComponent<CollectionCounter>();
+        dataSource.Entity = parent;
+        
+        yield return null;
+        Assert.That(collectionCounter.Items.Count, Is.EqualTo(parent.ChildrenCount));
+        var newChild = new DataEntity(_notifyManager);
+        
+        parent.AddChild(newChild);
+        Assert.That(collectionCounter.Items, Is.Not.EqualTo(parent.Children));
+        yield return null;
+        Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(1));
+        Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
+
+        newChild.RemoveParent();
+        Assert.That(collectionCounter.Items, Is.Not.EqualTo(parent.Children));
+        yield return null;
+        Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
+
+        var lastChild = parent.GetChildAt(parent.ChildrenCount - 1);
+        parent.InsertChild(0, lastChild);
+        yield return null;
+        Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(2));
+        
+        Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
+
+    }
+    
+    
+    [UnityTest]
+    public IEnumerator TestCollectionIncludingMultiples()
+    {
+        DataEntity parent = new DataEntity(_notifyManager, "Parent");
+        var collectionElement = new CollectionElement(parent);
+        var collection = new EntityCollection(_notifyManager);
+        for (int i = 0; i < 5; i++)
+        {
+            var child = new DataEntity(_notifyManager);
+            parent.AddChild(child);
+            // add the item to the collection twice.
+            collection.AddChild(child);
+            collection.AddChild(child);
+        }
+
+        collectionElement.Collection = collection;
+
+        // this is the key change from the above: the 'collection changes' have 
+        // occurred, but we still want some kind of CollectionUpdated to occur
+        // so that the CollectionCounter correctly gets initialized.
+        yield return null;
+
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<EntitySource>();
+        var collectionCounter = go.AddComponent<CollectionCounter>();
+        dataSource.Entity = parent;
+        
+        yield return null;
+        Assert.That(collectionCounter.Items, Is.EqualTo(collection));
+
+    }
+
 
     [UnityTest]
     public IEnumerator TestCompositeCollection()

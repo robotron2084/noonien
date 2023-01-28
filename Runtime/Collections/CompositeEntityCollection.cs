@@ -4,13 +4,13 @@ namespace com.enemyhideout.soong
 {
   public class CompositeEntityCollection : EntityCollection
   {
-    private IEnumerable<IEntityCollection> _collections;
-    private DataObserver<IEntityCollection> _observer;
+    private IEnumerable<ICollection<DataEntity>> _collections;
+    private DataObserver<ICollection<DataEntity>> _observer;
 
-    public CompositeEntityCollection(INotifyManager notifyManager, params IEntityCollection[] collections) : base(notifyManager)
+    public CompositeEntityCollection(INotifyManager notifyManager, params ICollection<DataEntity>[] collections) : base(notifyManager)
     {
       _collections = collections;
-      _observer = new DataObserver<IEntityCollection>(OnCollectionChanged);
+      _observer = new DataObserver<ICollection<DataEntity>>(OnCollectionChanged);
       foreach (var entityCollection in _collections)
       {
         entityCollection.AddObserver(_observer);
@@ -18,7 +18,7 @@ namespace com.enemyhideout.soong
       OnCollectionChanged(null);
     }
 
-    private void OnCollectionChanged(IEntityCollection obj)
+    private void OnCollectionChanged(ICollection<DataEntity> obj)
     {
       _children.Clear();
       foreach (var entityCollection in _collections)

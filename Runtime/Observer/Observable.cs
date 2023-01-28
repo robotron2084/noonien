@@ -3,15 +3,25 @@
 namespace com.enemyhideout.soong
 {
 
+  public interface IObservable<TObserved>
+  {
+    void AddObserver(IDataObserver<TObserved> observer);
+    void RemoveObserver(IDataObserver<TObserved> observer);
+    
+    int Version { get; }
+  }
   public abstract class Observable
   {
     protected bool _dirty = false;
     protected INotifyManager _notifyManager;
+
+    protected int _version;
+    public int Version => _version;
     protected int _queuePriority = 0;
     public abstract void MarkDirty();
   }
   
-  public class Observable<TObserved> : Observable
+  public class Observable<TObserved> : Observable, IObservable<TObserved>
   {
     private TObserved _observered;
 
@@ -47,6 +57,7 @@ namespace com.enemyhideout.soong
         _dirty = true; // do not allow enqueuing.
         _notifyManager?.EnqueueNotifier(NotifyUpdated, _queuePriority);
       }
+      _version++;
     }
 
     public void NotifyUpdated()

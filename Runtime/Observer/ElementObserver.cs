@@ -59,7 +59,7 @@ namespace com.enemyhideout.soong
         if (dataObserver.Element != null)
         {
           DataRemoved(dataObserver.Element);
-          dataObserver.RemoveObserver(dataObserver);
+          dataObserver.RemoveObserver();
         }
         
         if (entity != null)
@@ -91,12 +91,18 @@ namespace com.enemyhideout.soong
     }
 
 
-    private void Listen<TDataElement>(Action<T> callback) where TDataElement : DataElement
+    protected void Listen<TDataElement>(Action<T> callback) where TDataElement : DataElement
     {
       var observer = new DataElementObserver<T>(callback);
       _observers.Add(observer);
     }
 
+    //maaaaybe?
+    protected void ListenToCollection<TCollection>(Action<List<CollectionChange<T>>> callback)
+    {
+      
+    }
+    
     protected void OnDestroy()
     {
       foreach (var dataObserver in _observers)

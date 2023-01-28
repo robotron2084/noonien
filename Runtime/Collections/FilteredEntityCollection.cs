@@ -6,21 +6,21 @@ namespace com.enemyhideout.soong
 {
   public class FilteredEntityCollection : EntityCollection, IDisposable
   {
-    private Func<IEntityCollection, IEnumerable<DataEntity>> _filter;
+    private Func<ICollection<DataEntity>, IEnumerable<DataEntity>> _filter;
 
-    private IEntityCollection _source;
-    private DataObserver<IEntityCollection> _observer;
+    private ICollection<DataEntity> _source;
+    private DataObserver<ICollection<DataEntity>> _observer;
       
-    public FilteredEntityCollection(Func<IEntityCollection, IEnumerable<DataEntity>> filter, IEntityCollection source, INotifyManager notifyManager) : base(notifyManager)
+    public FilteredEntityCollection(Func<ICollection<DataEntity>, IEnumerable<DataEntity>> filter, ICollection<DataEntity> source, INotifyManager notifyManager) : base(notifyManager)
     {
       _filter = filter;
       _source = source;
-      _observer = new DataObserver<IEntityCollection>(OnCollectionChanged);
+      _observer = new DataObserver<ICollection<DataEntity>>(OnCollectionChanged);
       _source.AddObserver(_observer);
       OnCollectionChanged(_source);
     }
 
-    private void OnCollectionChanged(IEntityCollection entityCollection)
+    private void OnCollectionChanged(ICollection<DataEntity> entityCollection)
     {
       _children.Clear();
       _children.AddRange(_filter(entityCollection));

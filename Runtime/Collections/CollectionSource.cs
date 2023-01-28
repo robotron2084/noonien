@@ -6,9 +6,9 @@ namespace com.enemyhideout.soong
   public class CollectionSource : MonoBehaviour
   {
     
-    private IEntityCollection _collection;
+    private ICollection<DataEntity> _collection;
 
-    public IEntityCollection Collection
+    public ICollection<DataEntity> Collection
     {
       get
       {
@@ -28,9 +28,9 @@ namespace com.enemyhideout.soong
       }
     }
 
-    private List<IDataObserver<IEntityCollection>> _observations = new List<IDataObserver<IEntityCollection>>();
+    private List<IDataObserver<ICollection<DataEntity>>> _observations = new List<IDataObserver<ICollection<DataEntity>>>();
 
-    public void AddObserver(IDataObserver<IEntityCollection> observer)
+    public void AddObserver(IDataObserver<ICollection<DataEntity>> observer)
     {
       _observations.Add(observer);
       if (_collection != null)
@@ -39,7 +39,7 @@ namespace com.enemyhideout.soong
       }
     }
 
-    public void RemoveObserver(IDataObserver<IEntityCollection> observer)
+    public void RemoveObserver(IDataObserver<ICollection<DataEntity>> observer)
     {
       _observations.Remove(observer);
     }

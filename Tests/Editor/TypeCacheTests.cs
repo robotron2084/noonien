@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using com.enemyhideout.soong;
+using IObservable = com.enemyhideout.soong.IObservable<com.enemyhideout.soong.DataElement>;
 using com.enemyhideout.soong.Reflection;
 using NUnit.Framework;
 using Tests.Runtime;

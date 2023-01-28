@@ -4,11 +4,12 @@ using System.Linq;
 
 namespace com.enemyhideout.soong
 {
-  public abstract class DataElement
+  public abstract class DataElement : IObservable<DataElement>
   {
-
     private DataEntity _parent;
     private EventBuffer _eventBuffer;
+
+    public int Version => _observable.Version;
 
     public DataEntity Parent
     {

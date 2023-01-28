@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace com.enemyhideout.soong.Reflection
 {
@@ -35,7 +36,11 @@ namespace com.enemyhideout.soong.Reflection
         retVal.Add(baseClass);
         baseClass = baseClass.BaseType;
       }
-      retVal.AddRange(t.GetInterfaces());
+
+      var baseInterfaces = superType.GetInterfaces();
+      var typeInterfaces = t.GetInterfaces();
+      var interfacesExceptBase = typeInterfaces.Except(baseInterfaces);
+      retVal.AddRange(interfacesExceptBase);
 
       return retVal;
     }

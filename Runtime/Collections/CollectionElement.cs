@@ -3,9 +3,9 @@
 
   public class CollectionElementBase : DataElement
   {
-    protected IEntityCollection _collection;
+    protected ICollection<DataEntity> _collection;
 
-    public IEntityCollection Collection
+    public ICollection<DataEntity> Collection
     {
       get
       {
@@ -17,7 +17,7 @@
       }
     }
 
-    public CollectionElementBase(DataEntity parent, IEntityCollection collection) : base(parent)
+    public CollectionElementBase(DataEntity parent, ICollection<DataEntity> collection) : base(parent)
     {
       Collection = collection;
     }
@@ -30,6 +30,6 @@
   
   public class VirtualCollectionElement : CollectionElementBase
   {
-    public VirtualCollectionElement(DataEntity parent, IEntityCollection collection) : base(parent, collection) { }
+    public VirtualCollectionElement(DataEntity parent, ICollection<DataEntity> collection) : base(parent, collection) { }
   }
 }

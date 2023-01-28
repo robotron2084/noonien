@@ -55,7 +55,6 @@ namespace com.enemyhideout.soong.editor
     }
     
     private IMGUIContainer _entityInfo;
-
     
     private ListView _siblingsView;
     private List<DataEntity> _siblingsList;
@@ -73,24 +72,22 @@ namespace com.enemyhideout.soong.editor
     {
       instance = this;
       uxml.CloneTree(rootVisualElement);
-      _siblingsView = rootVisualElement.Q<ListView>("Siblings");
-      _parentsView = rootVisualElement.Q<ListView>("Parent");
-      _childrenView = rootVisualElement.Q<ListView>("Children");
+      InitializeListView("Siblings", OnSiblingSelectionChange, ((element, i) => OnBindItem(element, i, _siblingsList)), rootVisualElement, ref _siblingsView);
+      InitializeListView("Parent", OnSiblingSelectionChange, ((element, i) => OnBindItem(element, i, _parentsList)), rootVisualElement, ref _parentsView);
+      InitializeListView("Children", OnSiblingSelectionChange, ((element, i) => OnBindItem(element, i, _childrenList)), rootVisualElement, ref _childrenView);
+      
       _selectionPath = rootVisualElement.Q<TextField>("SelectionPath");
-      _entityInfo = rootVisualElement.Q<IMGUIContainer>();
-      _entityInfo.onGUIHandler = OnEntityOnGUI;
-      _siblingsView.makeItem = () => new Label();
-      _parentsView.makeItem = () => new Label();
-      _childrenView.makeItem = () => new Label();
-      _siblingsView.bindItem = ((element, i) => OnBindItem(element, i, _siblingsList));
-      _parentsView.bindItem = ((element, i) => OnBindItem(element, i, _parentsList));
-      _childrenView.bindItem = ((element, i) => OnBindItem(element, i, _childrenList));
-      _siblingsView.onSelectionChange += OnSiblingSelectionChange;
-      _childrenView.onSelectionChange += OnChildrenSelectionChange;
-      _parentsView.onSelectionChange += OnParentSelectionChange;
       _selectionPath.RegisterCallback<ChangeEvent<string>>(OnSelectionPathChanged);
       _currentSelection = _root;
       UpdateSelection();
+    }
+
+    private static void InitializeListView(string listViewName, Action<IEnumerable<object>> selectionChange, Action<VisualElement,int> onBind, VisualElement root, ref ListView listVar)
+    {
+      listVar = root.Q<ListView>(listViewName);
+      listVar.makeItem = () => new Label();
+      listVar.bindItem = onBind;
+      listVar.onSelectionChange += selectionChange;
     }
 
     private void OnSelectionPathChanged(ChangeEvent<string> evt)
@@ -177,16 +174,6 @@ namespace com.enemyhideout.soong.editor
     }
 
     private void OnSiblingSelectionChange(IEnumerable<object> selectedItems)
-    {
-      CurrentSelection = selectedItems.Cast<DataEntity>().FirstOrDefault();
-    }
-    
-    private void OnChildrenSelectionChange(IEnumerable<object> selectedItems)
-    {
-      CurrentSelection = selectedItems.Cast<DataEntity>().FirstOrDefault();
-    }
-    
-    private void OnParentSelectionChange(IEnumerable<object> selectedItems)
     {
       CurrentSelection = selectedItems.Cast<DataEntity>().FirstOrDefault();
     }

@@ -17,7 +17,7 @@ namespace com.enemyhideout.soong
     public static string LogTag = "Soong";
 
     private EntityCollection _children;
-    public IEntityCollection Children
+    public ICollection<DataEntity> Children
     {
       get
       {
@@ -68,7 +68,7 @@ namespace com.enemyhideout.soong
     {
       get
       {
-        return _elementsMap.Count;
+        return _elements.Count;
       }
     }
 
