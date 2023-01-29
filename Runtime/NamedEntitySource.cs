@@ -11,6 +11,10 @@ namespace com.enemyhideout.soong
     public virtual void Start()
     {
       Entity = EntityManager.Find(Query);
+      if (Entity == null)
+      {
+        Debug.Log($"Entity '{Query}' was not found.");
+      }
     }
   }
 }
