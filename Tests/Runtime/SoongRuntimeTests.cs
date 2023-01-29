@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Tests.Runtime;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
 
 public class SoongRuntimeTests
 {
@@ -309,9 +310,9 @@ public class SoongRuntimeTests
     public IEnumerator TestCompositeCollection()
     {
         var parentA = new DataEntity( _notifyManager, "ParentA");
-        AddChildren(parentA, _notifyManager, 5);
+        AddChildren(parentA, 5);
         var parentB = new DataEntity(_notifyManager, "ParentB");
-        AddChildren(parentB, _notifyManager, 5);
+        AddChildren(parentB, 5);
         var composite = new CompositeEntityCollection(_notifyManager, parentA.Children, parentB.Children);
 
         var collection = parentA.Children.Concat(parentB.Children);
@@ -333,7 +334,7 @@ public class SoongRuntimeTests
     public void TestFilterCollection()
     {
         var parentA = new DataEntity( _notifyManager, "ParentA");
-        AddChildren(parentA, _notifyManager, 5);
+        AddChildren(parentA, 5);
         var filtered = new FilteredEntityCollection(x => x.Where(y => y.Name.Contains("2")), parentA.Children, _notifyManager);
         List<DataEntity> items = new List<DataEntity>() { parentA.Children[2] };
         Assert.That(filtered, Is.EqualTo(items));
@@ -353,9 +354,9 @@ public class SoongRuntimeTests
     public void TestFilteredAndCompositedCollection()
     {
         var parentA = new DataEntity( _notifyManager, "ParentA");
-        AddChildren(parentA, _notifyManager, 5);
+        AddChildren(parentA, 5);
         var parentB = new DataEntity( _notifyManager, "ParentB");
-        AddChildren(parentB, _notifyManager, 5);
+        AddChildren(parentB, 5);
         var filtered = new FilteredEntityCollection(x => x.Where(y => y.Name.Contains("2")), parentA.Children, _notifyManager);
         var composite = new CompositeEntityCollection(_notifyManager, filtered, parentB.Children);
 
@@ -372,11 +373,41 @@ public class SoongRuntimeTests
 
     }
 
-    // [Test]
-    // public void TestPrefabInstantiation()
-    // {
-    //     
-    // }
+    [UnityTest]
+    public IEnumerator TestPrefabInstantiation()
+    {
+        var parentA = new DataEntity( _notifyManager, "ParentA");
+        AddChildren(parentA, 2, (child) =>
+        {
+            var healthElement = new HealthElement(child);
+            healthElement.Health = 42;
+        });
+
+        new CollectionElement(parentA);
+        
+        var prefab = Resources.Load<GameObject>("SoongPrefabInstantiationTest");
+        var parentGo = Object.Instantiate(prefab);
+        var source = parentGo.GetComponent<EntitySource>();
+        var tester = parentGo.GetComponent<ChildCollectionTester>();
+        source.Entity = parentA;
+        yield return null;
+
+        Assert.That(tester.Children.Count, Is.EqualTo(2));
+        Assert.That(tester.Children[0].ObservedHealth, Is.EqualTo(42));
+        
+        AddChildren(parentA, 2, (child) =>
+        {
+            child.Name += " - MORE";
+            var healthElement = new HealthElement(child);
+            healthElement.Health = 52;
+        });
+        Assert.That(parentA.ChildrenCount, Is.EqualTo(4));
+        
+        yield return null;
+        Assert.That(tester.Children.Count, Is.EqualTo(4));
+        Assert.That(tester.Children[2].ObservedHealth, Is.EqualTo(52));
+
+    }
 
     [UnityTest]
     public IEnumerator TestObservingMultipleElements()
@@ -397,12 +428,20 @@ public class SoongRuntimeTests
 
     }
 
-    private static void AddChildren(DataEntity parent, INotifyManager notifyManager, int numChildren)
+    private static List<DataEntity> AddChildren(DataEntity parent, int numChildren, Action<DataEntity> childCallback=null)
     {
+        var retVal = new List<DataEntity>();
         for (int i = 0; i < numChildren; i++)
         {
-            parent.AddChild(new DataEntity(notifyManager, $"Child {i}"));
+            var child = parent.AddNewChild( $"Child {i}");
+            if (childCallback != null)
+            {
+                childCallback(child);
+            }
+            retVal.Add(child);
         }
+
+        return retVal;
     }
 
 }

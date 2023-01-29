@@ -7,8 +7,6 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 ![Noonien Soong](https://images.squarespace-cdn.com/content/v1/5cc3d1b051f4d40415789cc2/cc796e93-4fa2-4dee-a14d-059cd47d55fc/Noonien-Soong-data-brothers.jpg?format=1000w)
 
 TODO
-  * Fix: Make sure Listen<T> works for multiple entity types.
-  * Fix: NamedEntitySource isn't correctly updating.
   * Fix: issue with instantiation race condition for EntitySource.
   * Add: Make EntityManager have a concept of a Cached Item.
   * Docs
@@ -22,6 +20,8 @@ TODO
   * EntityCollection should extend an abstract collection of Collection<T>.
 
 DONE
+  * Fix: NamedEntitySource isn't correctly updating.
+  * Fix: Make sure Listen<T> works for multiple entity types.
   * Replace the inefficient Collection Delta class with events.
   * Added queuePriority to NotifyManager so we can have phases of updates.
   * Events Bus? Something that would queue events on the element, that other elements could then listen for that are transient?
