@@ -18,14 +18,14 @@ namespace com.enemyhideout.soong
     // The data source we use to query for the model.
     protected EntitySource _source;
     // A list of observers that listen to various elements. By default we just listen to one.
-    protected List<DataElementObserver<T>> _observers = new List<DataElementObserver<T>>();
+    protected List<DataElementObserver> _observers = new List<DataElementObserver>();
     protected IEntityObserver _entityObserver;
 
     protected virtual void Awake()
     {
       _entityObserver = new EntityObserver(EntityUpdated);
       // initialize our observer to listen to the element type.
-      Listen<T>(DataUpdated);
+      Observe<T>(DataUpdated, DataAdded, DataRemoved);
       InitSource();
     }
 
@@ -56,22 +56,7 @@ namespace com.enemyhideout.soong
       Entity = entity;
       foreach (var dataObserver in _observers)
       {
-        if (dataObserver.Element != null)
-        {
-          DataRemoved(dataObserver.Element);
-          dataObserver.RemoveObserver();
-        }
-        
-        if (entity != null)
-        {
-          var element = entity.GetElement<T>();
-          if (element != null)
-          {
-            DataAdded(element);
-            dataObserver.AddObserver(element);
-            dataObserver.DataUpdated(element);
-          }
-        }
+        dataObserver.EntityUpdated(Entity);
       }
     }
 
@@ -91,9 +76,9 @@ namespace com.enemyhideout.soong
     }
 
 
-    protected void Listen<TDataElement>(Action<T> callback) where TDataElement : DataElement
+    protected void Observe<TDataElement>(Action<TDataElement> updated, Action<TDataElement> added=null, Action<TDataElement> removed=null) where TDataElement : DataElement
     {
-      var observer = new DataElementObserver<T>(callback);
+      var observer = new DataElementObserver<TDataElement>(updated, added, removed) ;
       _observers.Add(observer);
     }
 

@@ -224,8 +224,6 @@ public class SoongRuntimeTests
         Assert.That(collectionCounter.LatestChanges.Count, Is.EqualTo(5));
         Assert.That(collectionCounter.Items, Is.EqualTo(parent.Children));
         Assert.That(collectionCounter.Items.Count, Is.EqualTo(0));
-        
-
     }
     
     [UnityTest]
@@ -371,6 +369,31 @@ public class SoongRuntimeTests
         items = new List<DataEntity>() { parentA.Children[2] , anotherChild };
         items.AddRange(parentB.Children);
         Assert.That(composite, Is.EqualTo(items));
+
+    }
+
+    // [Test]
+    // public void TestPrefabInstantiation()
+    // {
+    //     
+    // }
+
+    [UnityTest]
+    public IEnumerator TestObservingMultipleElements()
+    {
+        DataEntity entity = new DataEntity(_notifyManager);
+        HealthElement health = new HealthElement(entity);
+        CashElement cash = new CashElement(entity);
+
+        cash.Cash = 123;
+        health.Health = 456;
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<EntitySource>();
+        var multipleObserver = go.AddComponent<MultipleObserver>();
+        dataSource.Entity = entity;
+        yield return null;
+        Assert.That(multipleObserver.Cash, Is.EqualTo(cash.Cash));
+        Assert.That(multipleObserver.Health, Is.EqualTo(health.Health));
 
     }
 

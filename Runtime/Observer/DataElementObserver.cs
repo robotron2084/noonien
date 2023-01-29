@@ -1,34 +1,74 @@
 ﻿using System;
+using UnityEngine.Assertions;
 
 namespace com.enemyhideout.soong
 {
-  public class DataElementObserver<TElementSubClass> : IDataObserver<DataElement> where TElementSubClass: DataElement
+  public abstract class DataElementObserver
+  {
+    public abstract void EntityUpdated(DataEntity entity);
+    public abstract void Destroy();
+  }
+  
+  public class DataElementObserver<TElementSubClass> : DataElementObserver, IDataObserver<DataElement> where TElementSubClass: DataElement
   {
     private int _cachedVersion;
-    private Action<TElementSubClass> _callback;
-    public DataElementObserver(Action<TElementSubClass> callback)
+    private Action<TElementSubClass> _updated;
+    private readonly Action<TElementSubClass> _added;
+    private readonly Action<TElementSubClass> _removed;
+    public TElementSubClass Element { get; set; }
+
+    public DataElementObserver(Action<TElementSubClass> updated, Action<TElementSubClass> added=null, Action<TElementSubClass> removed=null)
     {
-      _callback = callback;
+      _updated = updated;
+      _added = added;
+      _removed = removed;
+      Assert.IsNotNull(_updated);
     }
 
-    public TElementSubClass Element { get; set; }
+    public override void EntityUpdated(DataEntity entity)
+    {
+      if (Element != null)
+      {
+        if (_removed != null)
+        {
+          _removed(Element);
+        }
+        RemoveObserver();
+      }
+        
+      if (entity != null)
+      {
+        var element = entity.GetElement<TElementSubClass>();
+        if (element != null)
+        {
+          if (_added != null)
+          {
+            _added(element);
+          }
+          AddObserver(element);
+          _updated(element);
+        }
+      }
+    }
+
 
     public void DataUpdated(DataElement instance)
     {
       if (_cachedVersion < instance.Version)
       {
         _cachedVersion = instance.Version;
-        _callback((TElementSubClass)instance);
+        _updated((TElementSubClass)instance);
       }
     }
 
-    public void RemoveObserver()
+    private void RemoveObserver()
     {
       Element.RemoveObserver(this);
       Element = null;
+      _cachedVersion = 0;
     }
 
-    public void AddObserver(TElementSubClass element)
+    private void AddObserver(TElementSubClass element)
     {
       if (element != null)
       {
@@ -39,12 +79,11 @@ namespace com.enemyhideout.soong
       
     }
 
-    public void Destroy()
+    public override void Destroy()
     {
       if (Element != null)
       {
-        Element.RemoveObserver(this);
-        Element = null;
+        RemoveObserver();
       }
     }
   }
