@@ -92,6 +92,11 @@ namespace com.enemyhideout.noonien
       _observable.AddObserver(element);
     }
 
+    public bool HasObservers()
+    {
+      return _observable.HasObservers();
+    }
+
     public void SetProperty<T>(T newVal, ref T val)
     {
       PropertyCheck(newVal, ref val, _observable);

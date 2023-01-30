@@ -71,6 +71,11 @@ namespace com.enemyhideout.noonien
       _observable.AddObserver(element);
     }
 
+    public bool HasObservers()
+    {
+      return _observable.HasObservers();
+    }
+
     public IReadOnlyCollection<CollectionChange<T>> GetChanges()
     {
       return _changes as IReadOnlyCollection<CollectionChange<T>>;

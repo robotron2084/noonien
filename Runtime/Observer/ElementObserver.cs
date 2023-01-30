@@ -88,7 +88,7 @@ namespace com.enemyhideout.noonien
       
     }
     
-    protected void OnDestroy()
+    protected virtual void OnDestroy()
     {
       foreach (var dataObserver in _observers)
       {

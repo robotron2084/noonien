@@ -427,6 +427,45 @@ public class NoonienRuntimeTests
 
     }
 
+    [UnityTest]
+    public IEnumerator TestElementObserverDoesntLeakOnDestroy()
+    {
+        Node entity = new Node(_notifyManager);
+        HealthElement health = entity.AddElement<HealthElement>();
+
+        health.Health = 456;
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<NodeProvider>();
+        var observer = go.AddComponent<HealthObserver>();
+        dataSource.Node = entity;
+        yield return null;
+        Assert.That(health.HasObservers(), Is.True);
+        Assert.That(observer.ObservedHealth, Is.EqualTo(health.Health));
+        Object.Destroy(go);
+        yield return null;
+        Assert.That(health.HasObservers(), Is.False);
+    }
+
+    [UnityTest]
+    public IEnumerator TestCollectionObserverDoesntLeakOnDestroy()
+    {
+        Node entity = new Node(_notifyManager);
+        AddChildren(entity, 4);
+        CollectionElement collection = entity.AddElement<CollectionElement>();
+        
+
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<NodeProvider>();
+        var observer = go.AddComponent<CollectionCounter>();
+        dataSource.Node = entity;
+        yield return null;
+        Assert.That(collection.HasObservers(), Is.True);
+        Assert.That(observer.Items, Is.EqualTo(entity.Children));
+        Object.Destroy(go);
+        yield return null;
+        Assert.That(collection.Collection.HasObservers(), Is.False);
+    }
+
     private static List<Node> AddChildren(Node parent, int numChildren, Action<Node> childCallback=null)
     {
         var retVal = new List<Node>();

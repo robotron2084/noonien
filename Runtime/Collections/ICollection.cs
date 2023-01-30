@@ -18,5 +18,6 @@ namespace com.enemyhideout.noonien
     IReadOnlyCollection<CollectionChange<T>> GetChanges();
     
     void Clear();
+    bool HasObservers();
   }
 }

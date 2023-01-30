@@ -53,5 +53,14 @@ namespace com.enemyhideout.noonien
     {
       
     }
+
+    protected override void OnDestroy()
+    {
+      base.OnDestroy();
+      if (_element != null && _element.Collection != null)
+      {
+        _element.Collection.RemoveObserver(_collectionObserver);
+      }
+    }
   }
 }

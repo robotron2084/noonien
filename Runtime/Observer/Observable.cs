@@ -25,6 +25,7 @@ namespace com.enemyhideout.noonien
   public class Observable<TObserved> : Observable, IObservable<TObserved>
   {
     private TObserved _observered;
+    private List<IDataObserver<TObserved>> _observers = new List<IDataObserver<TObserved>>();
 
     public Observable(TObserved observed, INotifyManager notifyManager)
     {
@@ -39,7 +40,6 @@ namespace com.enemyhideout.noonien
       _queuePriority = queuePriority;
     }
 
-    private List<IDataObserver<TObserved>> _observers = new List<IDataObserver<TObserved>>();
 
     public void AddObserver(IDataObserver<TObserved> observer)
     {
@@ -49,6 +49,11 @@ namespace com.enemyhideout.noonien
     public void RemoveObserver(IDataObserver<TObserved> observer)
     {
       _observers.Remove(observer);
+    }
+
+    public bool HasObservers()
+    {
+      return _observers.Count > 0;
     }
 
     public override void MarkDirty()
