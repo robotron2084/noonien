@@ -1,4 +1,4 @@
-﻿using com.enemyhideout.soong;
+﻿using com.enemyhideout.noonien;
 using UnityEngine;
 
 namespace Tests.Runtime
@@ -7,15 +7,15 @@ namespace Tests.Runtime
   {
 
     public int ObservedHealth = 0;
-    protected override void DataUpdated(HealthElement instance)
+    protected override void DataUpdated(HealthElement element)
     {
-      base.DataUpdated(instance);
-      ObservedHealth = instance.Health;
+      base.DataUpdated(element);
+      ObservedHealth = element.Health;
     }
 
-    protected override void DataRemoved(HealthElement instance)
+    protected override void DataRemoved(HealthElement element)
     {
-      base.DataRemoved(instance);
+      base.DataRemoved(element);
       ObservedHealth = -1;
     }
   }

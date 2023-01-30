@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
 
   public interface IObservable<TObserved>
@@ -10,6 +10,7 @@ namespace com.enemyhideout.soong
     
     int Version { get; }
   }
+  
   public abstract class Observable
   {
     protected bool _dirty = false;

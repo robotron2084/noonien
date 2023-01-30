@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public interface INotifyManager
   {

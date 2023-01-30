@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using com.enemyhideout.soong;
+using com.enemyhideout.noonien;
 using UnityEngine;
 
 namespace Tests.Runtime
@@ -18,14 +18,14 @@ namespace Tests.Runtime
       base.Awake();
     }
 
-    protected override void CollectionUpdated(IReadOnlyCollection<CollectionChange<DataEntity>> collectionChanges)
+    protected override void CollectionUpdated(IReadOnlyCollection<CollectionChange<Node>> collectionChanges)
     {
       base.CollectionUpdated(collectionChanges);
       foreach (var collectionChange in collectionChanges)
       {
         var child = Instantiate(_prefab, transform);
-        var source = child.GetComponent<EntitySource>();
-        source.Entity = collectionChange.Item;
+        var source = child.GetComponent<NodeProvider>();
+        source.Node = collectionChange.Item;
         Children.Add(child.GetComponent<HealthObserver>());
       }
     }

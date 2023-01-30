@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public class CollectionSource : MonoBehaviour
   {
     
-    private ICollection<DataEntity> _collection;
+    private ICollection<Node> _collection;
 
-    public ICollection<DataEntity> Collection
+    public ICollection<Node> Collection
     {
       get
       {
@@ -28,9 +28,9 @@ namespace com.enemyhideout.soong
       }
     }
 
-    private List<IDataObserver<ICollection<DataEntity>>> _observations = new List<IDataObserver<ICollection<DataEntity>>>();
+    private List<IDataObserver<ICollection<Node>>> _observations = new List<IDataObserver<ICollection<Node>>>();
 
-    public void AddObserver(IDataObserver<ICollection<DataEntity>> observer)
+    public void AddObserver(IDataObserver<ICollection<Node>> observer)
     {
       _observations.Add(observer);
       if (_collection != null)
@@ -39,7 +39,7 @@ namespace com.enemyhideout.soong
       }
     }
 
-    public void RemoveObserver(IDataObserver<ICollection<DataEntity>> observer)
+    public void RemoveObserver(IDataObserver<ICollection<Node>> observer)
     {
       _observations.Remove(observer);
     }

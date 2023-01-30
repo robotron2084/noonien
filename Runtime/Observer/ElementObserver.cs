@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using com.enemyhideout.soong;
+using com.enemyhideout.noonien;
 using UnityEngine;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public class ElementObserver : MonoBehaviour
   {
   }
 
-  public class ElementObserver<T> : ElementObserver where T : DataElement
+  public class ElementObserver<T> : ElementObserver where T : Element
   {
     // The element we're interested in. It is always assumed there is at least one element being looked at.
     protected T _element;
     // The element's data model.
-    protected DataEntity Entity;
+    protected Node Node;
     // The data source we use to query for the model.
-    protected EntitySource _source;
+    protected NodeProvider _source;
     // A list of observers that listen to various elements. By default we just listen to one.
     protected List<DataElementObserver> _observers = new List<DataElementObserver>();
-    protected IEntityObserver _entityObserver;
+    protected INodeObserver _nodeObserver;
 
     protected virtual void Awake()
     {
-      _entityObserver = new EntityObserver(EntityUpdated);
+      _nodeObserver = new NodeObserver(NodeUpdated);
       // initialize our observer to listen to the element type.
       Observe<T>(DataUpdated, DataAdded, DataRemoved);
       InitSource();
@@ -35,10 +35,10 @@ namespace com.enemyhideout.soong
       {
         return;
       }
-      _source = GetComponentInParent<EntitySource>();
+      _source = GetComponentInParent<NodeProvider>();
       if (_source != null)
       {
-        _source.ObserveModel(_entityObserver);
+        _source.ObserveModel(_nodeObserver);
       }
     }
 
@@ -47,36 +47,36 @@ namespace com.enemyhideout.soong
       InitSource();
     }
 
-    public void EntityUpdated(DataEntity entity)
+    public void NodeUpdated(Node node)
     {
-      if (entity == Entity)
+      if (node == Node)
       {
         return;
       }
-      Entity = entity;
+      Node = node;
       foreach (var dataObserver in _observers)
       {
-        dataObserver.EntityUpdated(Entity);
+        dataObserver.NodeUpdated(Node);
       }
     }
 
-    protected virtual void DataAdded(T instance)
+    protected virtual void DataAdded(T element)
     {
-      _element = instance;
+      _element = element;
     }
     
-    protected virtual void DataUpdated(T instance)
+    protected virtual void DataUpdated(T element)
     {
       // do stuff.
     }
     
-    protected virtual void DataRemoved(T instance)
+    protected virtual void DataRemoved(T element)
     {
       _element = null;
     }
 
 
-    protected void Observe<TDataElement>(Action<TDataElement> updated, Action<TDataElement> added=null, Action<TDataElement> removed=null) where TDataElement : DataElement
+    protected void Observe<TDataElement>(Action<TDataElement> updated, Action<TDataElement> added=null, Action<TDataElement> removed=null) where TDataElement : Element
     {
       var observer = new DataElementObserver<TDataElement>(updated, added, removed) ;
       _observers.Add(observer);
@@ -97,10 +97,10 @@ namespace com.enemyhideout.soong
 
       _observers.Clear();
 
-      Entity = null;
+      Node = null;
       if (_source != null)
       {
-        _source.RemoveObserver(_entityObserver);
+        _source.RemoveObserver(_nodeObserver);
       }
     }
   }

@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
 
-  public class CollectionElement : DataElement
+  public class CollectionElement : Element
   {
-    public override DataEntity Parent
+    public override Node Parent
     {
       get => _parent;
       set
@@ -15,9 +15,9 @@ namespace com.enemyhideout.soong
       }
     }
 
-    protected ICollection<DataEntity> _collection;
+    protected ICollection<Node> _collection;
 
-    public ICollection<DataEntity> Collection
+    public ICollection<Node> Collection
     {
       get
       {

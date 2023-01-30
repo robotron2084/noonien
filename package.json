@@ -1,7 +1,7 @@
 {
-  "name": "com.enemyhideout.soong",
-  "version": "0.0.1",
-  "displayName": "Soong",
+  "name": "com.enemyhideout.noonien",
+  "version": "0.0.2",
+  "displayName": "Noonien",
   "description": "An ECS system for data, mainly for my own usage.",
   "unity": "2019.1",
   "unityRelease": "0b5",
@@ -17,9 +17,9 @@
   },
   "samples": [
     {
-      "displayName": "Hello Entity",
+      "displayName": "Hello Node",
       "description": "The simplest example.",
-      "path": "Samples~/Soong.BasicExample"
+      "path": "Samples~/Noonien.BasicExample"
     },
     {
       "displayName": "Pong Game Example",
@@ -29,7 +29,7 @@
     {
       "displayName": "Collection Example",
       "description": "Shows how to work with collections of entities in a simple example.",
-      "path": "Samples~/Soong.CollectionExample"
+      "path": "Samples~/Noonien.CollectionExample"
     }
   ]
 }

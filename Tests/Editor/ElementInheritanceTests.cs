@@ -1,8 +1,8 @@
-﻿using com.enemyhideout.soong;
+﻿using com.enemyhideout.noonien;
 
 namespace Tests.Runtime
 {
-  public class SuperClassElement : DataElement
+  public class SuperClassElement : Element
   {
   }
 
@@ -10,7 +10,7 @@ namespace Tests.Runtime
   {
   }
 
-  public class InterfaceElement : DataElement, IElement
+  public class InterfaceElement : Element, IElement
   {
   }
   
@@ -26,7 +26,7 @@ namespace Tests.Runtime
   {
   }
 
-  public class MultiInterfaceElement : DataElement, ISubElement
+  public class MultiInterfaceElement : Element, ISubElement
   {
   }
 

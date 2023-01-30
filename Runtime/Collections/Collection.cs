@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public class Collection<T> : ICollection<T>
   {

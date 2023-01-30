@@ -1,8 +1,8 @@
-﻿using com.enemyhideout.soong;
+﻿using com.enemyhideout.noonien;
 
 namespace Tests.Runtime
 {
-  public class CashElement : DataElement
+  public class CashElement : Element
   {
     private int _cash;
     public int Cash

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public class CollectionDelta<T>
   {

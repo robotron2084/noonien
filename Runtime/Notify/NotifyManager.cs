@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public class NotifyManager : MonoBehaviour, INotifyManager
   {

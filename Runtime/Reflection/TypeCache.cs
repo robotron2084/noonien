@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace com.enemyhideout.soong.Reflection
+namespace com.enemyhideout.noonien.Reflection
 {
   public class TypeCache<TBase>
   {

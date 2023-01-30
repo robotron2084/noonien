@@ -1,4 +1,4 @@
-﻿using com.enemyhideout.soong;
+﻿using com.enemyhideout.noonien;
 using NUnit.Framework;
 
 namespace Tests.Editor

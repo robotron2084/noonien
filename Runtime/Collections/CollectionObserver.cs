@@ -1,23 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
 
   public class CollectionObserver : ElementObserver<CollectionElement>
   {
-    private VersionedDataObserver<ICollection<DataEntity>> _collectionObserver;
+    private VersionedDataObserver<ICollection<Node>> _collectionObserver;
 
-    protected override void DataAdded(CollectionElement instance)
+    protected override void DataAdded(CollectionElement element)
     {
-      base.DataAdded(instance);
-      _collectionObserver = new VersionedDataObserver<ICollection<DataEntity>>(OnCollectionChanged, instance.Collection.Version);
-      instance.Collection.AddObserver(_collectionObserver);
-      List<CollectionChange<DataEntity>> changes = new List<CollectionChange<DataEntity>>();
+      base.DataAdded(element);
+      _collectionObserver = new VersionedDataObserver<ICollection<Node>>(OnCollectionChanged, element.Collection.Version);
+      element.Collection.AddObserver(_collectionObserver);
+      List<CollectionChange<Node>> changes = new List<CollectionChange<Node>>();
       for (var i = 0; i < _element.Collection.Count; i++)
       {
         var dataEntity = _element.Collection[i];
-        changes.Add(new CollectionChange<DataEntity>
+        changes.Add(new CollectionChange<Node>
         {
           Item = dataEntity,
           OldIndex = -1,
@@ -29,19 +29,19 @@ namespace com.enemyhideout.soong
 
     }
 
-    protected void OnCollectionChanged(ICollection<DataEntity> collection)
+    protected void OnCollectionChanged(ICollection<Node> collection)
     {
       var changes  = collection.GetChanges();
       NotifyIfCollectionChanged(changes);
     }
 
-    protected override void DataRemoved(CollectionElement instance)
+    protected override void DataRemoved(CollectionElement element)
     {
-      base.DataRemoved(instance);
-      instance.Collection.RemoveObserver(_collectionObserver);
+      base.DataRemoved(element);
+      element.Collection.RemoveObserver(_collectionObserver);
     }
 
-    private void NotifyIfCollectionChanged(IReadOnlyCollection<CollectionChange<DataEntity>> collectionChanges)
+    private void NotifyIfCollectionChanged(IReadOnlyCollection<CollectionChange<Node>> collectionChanges)
     {
       if (collectionChanges.Count > 0)
       {
@@ -49,7 +49,7 @@ namespace com.enemyhideout.soong
       }
     }
 
-    protected virtual void CollectionUpdated(IReadOnlyCollection<CollectionChange<DataEntity>> collectionChanges)
+    protected virtual void CollectionUpdated(IReadOnlyCollection<CollectionChange<Node>> collectionChanges)
     {
       
     }

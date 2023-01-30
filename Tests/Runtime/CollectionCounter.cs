@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using com.enemyhideout.soong;
+using com.enemyhideout.noonien;
 
 namespace Tests.Runtime
 {
   public class CollectionCounter : CollectionObserver
   {
-    public IReadOnlyCollection<CollectionChange<DataEntity>> LatestChanges;
-    public List<DataEntity> Items = new List<DataEntity>();
+    public IReadOnlyCollection<CollectionChange<Node>> LatestChanges;
+    public List<Node> Items = new List<Node>();
 
-    protected override void DataAdded(CollectionElement instance)
+    protected override void DataAdded(CollectionElement element)
     {
       Items.Clear();
-      base.DataAdded(instance);
+      base.DataAdded(element);
     }
 
-    protected override void CollectionUpdated(IReadOnlyCollection<CollectionChange<DataEntity>> collectionChanges)
+    protected override void CollectionUpdated(IReadOnlyCollection<CollectionChange<Node>> collectionChanges)
     {
       base.CollectionUpdated(collectionChanges);
       LatestChanges = collectionChanges.ToList();
@@ -33,9 +33,9 @@ namespace Tests.Runtime
       }
     }
 
-    protected override void DataRemoved(CollectionElement instance)
+    protected override void DataRemoved(CollectionElement element)
     {
-      base.DataRemoved(instance);
+      base.DataRemoved(element);
       Items.Clear();
     }
   }

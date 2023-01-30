@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using com.enemyhideout.soong;
-using IObservable = com.enemyhideout.soong.IObservable<com.enemyhideout.soong.DataElement>;
-using com.enemyhideout.soong.Reflection;
+using com.enemyhideout.noonien;
+using IObservable = com.enemyhideout.noonien.IObservable<com.enemyhideout.noonien.Element>;
+using com.enemyhideout.noonien.Reflection;
 using NUnit.Framework;
 using Tests.Runtime;
 
@@ -15,14 +15,14 @@ namespace Tests.Editor
     [Test]
     public void TestBuildTypes([ValueSource(nameof(BuildTypesTestCases))] BuildTypesTestCase testCase)
     {
-      var output = TypeCache<DataElement>.BuildTypes(testCase.Input);
+      var output = TypeCache<Element>.BuildTypes(testCase.Input);
       Assert.That(output, Is.EqualTo(testCase.Expected));
     }
 
     [Test]
     public void TestBuildTypesThrowsOnBadType()
     {
-      Assert.Throws<ArgumentException>(() => TypeCache<DataElement>.BuildTypes(typeof(NotADataElement)));
+      Assert.Throws<ArgumentException>(() => TypeCache<Element>.BuildTypes(typeof(NotADataElement)));
     }
 
     
@@ -45,7 +45,7 @@ namespace Tests.Editor
       new BuildTypesTestCase
       {
         Description = "Base DataElement Should Return nothing.",
-        Input = typeof(DataElement),
+        Input = typeof(Element),
         Expected = new List<Type>()
       },
       new BuildTypesTestCase

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public class CollectionDataObserver<T> : IDataObserver<ICollection<T>>
   {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using com.enemyhideout.soong;
+using com.enemyhideout.noonien;
 using NUnit.Framework;
 using Tests.Editor;
 using UnityEngine;
 
-namespace com.enemyhideout.soong.tests
+namespace com.enemyhideout.noonien.tests
 {
   [TestFixture]
   public class CollectionDeltaTesting

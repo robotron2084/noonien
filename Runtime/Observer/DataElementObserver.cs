@@ -1,15 +1,15 @@
 ﻿using System;
 using UnityEngine.Assertions;
 
-namespace com.enemyhideout.soong
+namespace com.enemyhideout.noonien
 {
   public abstract class DataElementObserver
   {
-    public abstract void EntityUpdated(DataEntity entity);
+    public abstract void NodeUpdated(Node entity);
     public abstract void Destroy();
   }
   
-  public class DataElementObserver<TElementSubClass> : DataElementObserver, IDataObserver<DataElement> where TElementSubClass: DataElement
+  public class DataElementObserver<TElementSubClass> : DataElementObserver, IDataObserver<Element> where TElementSubClass: Element
   {
     private int _cachedVersion;
     private Action<TElementSubClass> _updated;
@@ -25,7 +25,7 @@ namespace com.enemyhideout.soong
       Assert.IsNotNull(_updated);
     }
 
-    public override void EntityUpdated(DataEntity entity)
+    public override void NodeUpdated(Node entity)
     {
       if (Element != null)
       {
@@ -52,7 +52,7 @@ namespace com.enemyhideout.soong
     }
 
 
-    public void DataUpdated(DataElement instance)
+    public void DataUpdated(Element instance)
     {
       if (_cachedVersion < instance.Version)
       {

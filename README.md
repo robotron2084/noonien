@@ -1,4 +1,4 @@
-# Soong - An Entity Component System for Data
+# Noonien - An Entity Component System for Data
 
 WORK IN PROGRESS
 
@@ -7,7 +7,6 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 ![Noonien Soong](https://images.squarespace-cdn.com/content/v1/5cc3d1b051f4d40415789cc2/cc796e93-4fa2-4dee-a14d-059cd47d55fc/Noonien-Soong-data-brothers.jpg?format=1000w)
 
 TODO
-  * Rename?
   * Docs
   * Helper functions for instantiation and collections.
   * More Samples
@@ -18,7 +17,13 @@ TODO
   * EntityCollection should extend an abstract collection of Collection<T>.
 
 DONE
+  * Renamed from Soong to Noonien. Highlights
+    * DataEntity -> Node
+    * DataElement -> Element
+    * EntitySource -> NodeProvider
+    * EntityManager -> NodeManager
   * Add: Make EntityManager have a concept of a Cached Item.
+    * You can now Add/Register/Get nodes, elements, and collections.
   * Fix: issue with instantiation race condition for EntitySource.
   * Fix: NamedEntitySource isn't correctly updating.
   * Fix: Make sure Listen<T> works for multiple entity types.

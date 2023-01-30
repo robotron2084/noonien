@@ -1,4 +1,4 @@
-﻿using com.enemyhideout.soong;
+﻿using com.enemyhideout.noonien;
 using UnityEngine;
 
 namespace Tests.Runtime
@@ -19,10 +19,10 @@ namespace Tests.Runtime
       Cash = instance.Cash;
     }
 
-    protected override void DataUpdated(HealthElement instance)
+    protected override void DataUpdated(HealthElement element)
     {
-      base.DataUpdated(instance);
-      Health = instance.Health;
+      base.DataUpdated(element);
+      Health = element.Health;
     }
   }
 }
