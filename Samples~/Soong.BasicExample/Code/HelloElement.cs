@@ -22,13 +22,5 @@ namespace Soong.BasicExample.Code
       }
     }
 
-
-    /// <summary>
-    /// All DataElements require a parent, so a constructor receiving a parent
-    /// is required.
-    /// </summary>
-    public HelloElement(DataEntity parent) : base(parent)
-    {
-    }
   }
 }

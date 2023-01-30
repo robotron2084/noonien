@@ -101,7 +101,7 @@ namespace com.enemyhideout.soong.tests
       var root = new DataEntity(null);
       EntityManager manager = new EntityManager(root);
       var child = root.AddNewChild("Child");
-      var cashElement = new CashElement(child);
+      var cashElement = child.AddElement<CashElement>();
       manager.Register("AnotherName", cashElement);
       var sameEntity = manager.Get<CashElement>("AnotherName");
       Assert.That(sameEntity, Is.EqualTo(cashElement));
@@ -113,7 +113,7 @@ namespace com.enemyhideout.soong.tests
       var root = new DataEntity(null);
       EntityManager manager = new EntityManager(root);
       var child = root.AddNewChild("Child");
-      var cashElement = new CashElement(child);
+      var cashElement = child.AddElement<CashElement>();
       manager.Register("AnotherName", root.Children);
       var sameEntity = manager.GetCollection("AnotherName");
       Assert.That(sameEntity, Is.EqualTo(root.Children));

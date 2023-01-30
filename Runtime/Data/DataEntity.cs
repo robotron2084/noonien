@@ -183,6 +183,18 @@ namespace com.enemyhideout.soong
       _children.RemoveChild(dataEntity);
     }
 
+    public T AddElement<T>() where T : DataElement, new() 
+    {
+      var element = new T();
+      element.Parent = this;
+      return element;
+    }
+
+    public T Get<T>() where T : class
+    {
+      return GetElement<T>();
+    }
+
     public T GetElement<T>() where T : class
     {
       DataElement dataElement = null;

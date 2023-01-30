@@ -31,7 +31,7 @@ public class HelloController : MonoBehaviour
     // A data entity is a simple container that contains data.
     var dataEntity = new DataEntity(notifyManager, "My Entity");
     // This data entity has one element, which contains a Count property that we can update.
-    _element = new HelloElement(dataEntity);
+    _element = dataEntity.AddElement<HelloElement>();
 
     // An EntitySource is how we connect the data entity to a game object, so that
     // observers on a monobehaviour can view it.

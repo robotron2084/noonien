@@ -32,7 +32,7 @@ public class SoongRuntimeTests
     public IEnumerator SoongRuntimeTestsWithEnumeratorPasses()
     {
         DataEntity entity = new DataEntity(null);
-        HealthElement health = new HealthElement(entity);
+        HealthElement health = entity.AddElement<HealthElement>();
 
         health.Health = 10;
 
@@ -76,8 +76,7 @@ public class SoongRuntimeTests
     public IEnumerator TestNotify()
     {
         DataEntity entity = new DataEntity(_notifyManager);
-        HealthElement health = new HealthElement(entity);
-
+        HealthElement health = entity.AddElement<HealthElement>();
         health.Health = 10;
 
         GameObject go = new GameObject();
@@ -161,7 +160,7 @@ public class SoongRuntimeTests
     public IEnumerator TestCollectionObserving()
     {
         DataEntity parent = new DataEntity(_notifyManager, "Parent");
-        new CollectionElement(parent);
+        parent.AddElement<CollectionElement>();
         for (int i = 0; i < 5; i++)
         {
             var child = new DataEntity(_notifyManager);
@@ -202,7 +201,7 @@ public class SoongRuntimeTests
     public IEnumerator TestCollectionClear()
     {
         DataEntity parent = new DataEntity(_notifyManager, "Parent");
-        new CollectionElement(parent);
+        parent.AddElement<CollectionElement>();
         for (int i = 0; i < 5; i++)
         {
             var child = new DataEntity(_notifyManager);
@@ -231,7 +230,7 @@ public class SoongRuntimeTests
     public IEnumerator TestCollectionObservingAfterChangeEvents()
     {
         DataEntity parent = new DataEntity(_notifyManager, "Parent");
-        new CollectionElement(parent);
+        parent.AddElement<CollectionElement>();
         for (int i = 0; i < 5; i++)
         {
             var child = new DataEntity(_notifyManager);
@@ -277,7 +276,7 @@ public class SoongRuntimeTests
     public IEnumerator TestCollectionIncludingMultiples()
     {
         DataEntity parent = new DataEntity(_notifyManager, "Parent");
-        var collectionElement = new CollectionElement(parent);
+        var collectionElement = parent.AddElement<CollectionElement>();
         var collection = new EntityCollection(_notifyManager);
         for (int i = 0; i < 5; i++)
         {
@@ -379,11 +378,11 @@ public class SoongRuntimeTests
         var parentA = new DataEntity( _notifyManager, "ParentA");
         AddChildren(parentA, 2, (child) =>
         {
-            var healthElement = new HealthElement(child);
+            var healthElement = child.AddElement<HealthElement>();;
             healthElement.Health = 42;
         });
 
-        new CollectionElement(parentA);
+        parentA.AddElement<CollectionElement>();
         
         var prefab = Resources.Load<GameObject>("SoongPrefabInstantiationTest");
         var parentGo = Object.Instantiate(prefab);
@@ -398,7 +397,7 @@ public class SoongRuntimeTests
         AddChildren(parentA, 2, (child) =>
         {
             child.Name += " - MORE";
-            var healthElement = new HealthElement(child);
+            var healthElement = child.AddElement<HealthElement>();
             healthElement.Health = 52;
         });
         Assert.That(parentA.ChildrenCount, Is.EqualTo(4));
@@ -413,8 +412,8 @@ public class SoongRuntimeTests
     public IEnumerator TestObservingMultipleElements()
     {
         DataEntity entity = new DataEntity(_notifyManager);
-        HealthElement health = new HealthElement(entity);
-        CashElement cash = new CashElement(entity);
+        HealthElement health = entity.AddElement<HealthElement>();
+        CashElement cash = entity.AddElement<CashElement>();
 
         cash.Cash = 123;
         health.Health = 456;

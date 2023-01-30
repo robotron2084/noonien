@@ -68,10 +68,6 @@ namespace Code.Data
       }
     }
 
-    public Unit(Rect bounds, DataEntity parent) : base(parent)
-    {
-      _bounds = bounds;
-    }
 
   }
 }

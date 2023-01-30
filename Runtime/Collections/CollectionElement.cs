@@ -1,8 +1,20 @@
-﻿namespace com.enemyhideout.soong
+﻿using System;
+
+namespace com.enemyhideout.soong
 {
 
-  public class CollectionElementBase : DataElement
+  public class CollectionElement : DataElement
   {
+    public override DataEntity Parent
+    {
+      get => _parent;
+      set
+      {
+        InitializeParent(value);
+        Collection = _parent.Children;
+      }
+    }
+
     protected ICollection<DataEntity> _collection;
 
     public ICollection<DataEntity> Collection
@@ -17,19 +29,7 @@
       }
     }
 
-    public CollectionElementBase(DataEntity parent, ICollection<DataEntity> collection) : base(parent)
-    {
-      Collection = collection;
-    }
   }
 
-  public class CollectionElement : CollectionElementBase
-  {
-    public CollectionElement(DataEntity parent) : base(parent, parent.Children) { }
-  }
   
-  public class VirtualCollectionElement : CollectionElementBase
-  {
-    public VirtualCollectionElement(DataEntity parent, ICollection<DataEntity> collection) : base(parent, collection) { }
-  }
 }

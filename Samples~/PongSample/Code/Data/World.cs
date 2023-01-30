@@ -45,8 +45,5 @@ namespace Code.Data
         SetProperty(value, ref _bounds);
       }
     }
-    public World(DataEntity parent) : base(parent)
-    {
-    }
   }
 }

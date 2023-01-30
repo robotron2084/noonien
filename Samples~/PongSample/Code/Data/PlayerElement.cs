@@ -17,8 +17,5 @@ namespace Code.Data
       }
     }
 
-    public PlayerElement(DataEntity parent) : base(parent)
-    {
-    }
   }
 }

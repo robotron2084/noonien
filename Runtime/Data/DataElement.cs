@@ -6,14 +6,30 @@ namespace com.enemyhideout.soong
 {
   public abstract class DataElement : IObservable<DataElement>
   {
-    private DataEntity _parent;
+    protected DataEntity _parent;
     private EventBuffer _eventBuffer;
 
     public int Version => _observable.Version;
 
-    public DataEntity Parent
+    public virtual DataEntity Parent
     {
       get => _parent;
+      set
+      {
+        InitializeParent(value);
+      }
+    }
+
+    protected void InitializeParent(DataEntity parent)
+    {
+      if (_parent != null)
+      {
+        throw new Exception("Cannot reparent a data element!");
+      }
+      _parent = parent;
+      _notifyManager = parent.NotifyManager;
+      _parent.AddElement(this);
+      _observable = new Observable<DataElement>(this, _notifyManager);
     }
 
     public string Name
@@ -23,18 +39,14 @@ namespace com.enemyhideout.soong
         return $"{_parent.Name}.{GetType()}";
       }
     }
-    private Observable<DataElement> _observable;
-    private Observable<DataElement> _eventBufferObservable;
-    private INotifyManager _notifyManager;
+    protected Observable<DataElement> _observable;
+    protected Observable<DataElement> _eventBufferObservable;
+    protected INotifyManager _notifyManager;
 
-    public DataElement(DataEntity parent)
+    public DataElement()
     {
-      _parent = parent;
-      _notifyManager = parent.NotifyManager;
-      _observable = new Observable<DataElement>(this, _notifyManager);
-      parent.AddElement(this);
     }
-
+    
     public void EnqueueEvent(DataEvent evt)
     {
       if (_eventBuffer == null)

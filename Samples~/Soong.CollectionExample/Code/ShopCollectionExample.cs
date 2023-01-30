@@ -28,7 +28,7 @@ public class ShopCollectionExample : MonoBehaviour
         for (int i = 0; i < 100; i++)
         {
             var shopItemEntity = allShopItems.AddNewChild("Shop Item " + i);
-            var shopItem = new ShopItem(shopItemEntity);
+            var shopItem = shopItemEntity.AddElement<ShopItem>();
             shopItem.Price = (i+1) * 10;
         }
 
@@ -40,7 +40,7 @@ public class ShopCollectionExample : MonoBehaviour
         var currentShop = root.AddNewChild("Shop");
         // then we create a CollectionElement to hold our collection that we'll
         // update.
-        var shopCollection = new CollectionElement(currentShop);
+        var shopCollection = currentShop.AddElement<CollectionElement>();
         // Create a collection of current shop items that we will populate.
         var shopDeals = new EntityCollection(notify);
         // And assign that collection to the CollectionElement.
@@ -63,9 +63,6 @@ public class ShopCollectionExample : MonoBehaviour
         {
             get => _price;
             set => SetProperty(value, ref _price);
-        }
-        public ShopItem(DataEntity parent) : base(parent)
-        {
         }
     }
 

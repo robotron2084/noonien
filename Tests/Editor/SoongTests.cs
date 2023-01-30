@@ -27,7 +27,7 @@ namespace com.enemyhideout.soong.tests
         public void TestAddElement()
         {
             DataEntity entity = new DataEntity(null);
-            var element = new SuperClassElement(entity);
+            var element = entity.AddElement<SuperClassElement>();
             Assert.That(entity.ElementsCount, Is.EqualTo(1));
             Assert.That(element.Parent, Is.EqualTo(entity));
         }
@@ -77,7 +77,7 @@ namespace com.enemyhideout.soong.tests
         public void TestGetElementSuperClass()
         {
             var entity = new DataEntity(null);
-            var subElement = new SubClassElement(entity);
+            var subElement = entity.AddElement<SubClassElement>();
 
             var retVal = entity.GetElement<SuperClassElement>();
             Assert.That(retVal, Is.EqualTo(subElement));
@@ -87,7 +87,7 @@ namespace com.enemyhideout.soong.tests
         public void TestGetElementSubClass()
         {
             var entity = new DataEntity(null);
-            var subElement = new SubClassElement(entity);
+            var subElement = entity.AddElement<SubClassElement>();
 
             var retVal = entity.GetElement<SubClassElement>();
             Assert.That(retVal, Is.EqualTo(subElement));
@@ -97,8 +97,8 @@ namespace com.enemyhideout.soong.tests
         public void TestGetElementSubClassMixed()
         {
             var entity = new DataEntity(null);
-            var subElement = new SubClassElement(entity);
-            var superElement = new SuperClassElement(entity);
+            var subElement = entity.AddElement<SubClassElement>();
+            var superElement = entity.AddElement<SuperClassElement>();
             
             var retVal = entity.GetElement<SuperClassElement>();
             Assert.That(retVal, Is.EqualTo(superElement));
@@ -109,8 +109,8 @@ namespace com.enemyhideout.soong.tests
         public void TestGetElementSubClassMixedOrder2()
         {
             var entity = new DataEntity(null);
-            var superElement = new SuperClassElement(entity);
-            var subElement = new SubClassElement(entity);
+            var superElement = entity.AddElement<SuperClassElement>();
+            var subElement = entity.AddElement<SubClassElement>();
 
             // An odd and perhaps benign issue: it is not possible to gain access to SuperClass due to the order of 
             // addition of elements! Not sure if I care?
@@ -122,7 +122,7 @@ namespace com.enemyhideout.soong.tests
         public void TestGetElementInterface()
         {
             var entity = new DataEntity(null);
-            var element = new InterfaceElement(entity);
+            var element = entity.AddElement<InterfaceElement>();
             var retVal = entity.GetElement<IElement>();
             Assert.That(retVal, Is.EqualTo(element));
         }

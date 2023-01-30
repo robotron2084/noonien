@@ -6,7 +6,7 @@ namespace Soong.CollectionExample.Code
 {
   public class ShopCollectionObserver : CollectionObserver
   {
-    protected override void CollectionUpdated(List<CollectionChange<DataEntity>> collectionChanges)
+    protected override void CollectionUpdated(IReadOnlyCollection<CollectionChange<DataEntity>> collectionChanges)
     {
       base.CollectionUpdated(collectionChanges);
       // when changes to the collection occcur, the collection observer will recieve

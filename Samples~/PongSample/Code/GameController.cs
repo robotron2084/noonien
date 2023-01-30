@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
     var player2 = MakePlayer(new Vector2(5, 0), _paddleSpeed, "Player Two", players);
     var ball = MakeBall(_ballSpeed, Root);
     var world = Root.AddNewChild("World");
-    _world = new World(world);
+    _world = world.AddElement<World>();
     _world.Bounds = new Rect(new Vector2(-6,-3), new Vector2(6*2,3*2));
 
     _ballUnit = ball.GetElement<Unit>();
@@ -66,8 +66,9 @@ public class GameController : MonoBehaviour
   private static DataEntity MakePlayer(Vector2 position, float speed, string name, DataEntity parent)
   {
     var player = parent.AddNewChild(name);
-    new PlayerElement(player);
-    var unit = new Unit(new Rect(position, new Vector2(0.125f, 1f)), player);
+    player.AddElement<PlayerElement>();
+    var unit = player.AddElement<Unit>();
+    unit.Bounds = new Rect(position, new Vector2(0.125f, 1f));
     unit.Velocity = new Vector2(0, Random.Range(0.5f * speed, speed));
     return player;
   }
@@ -75,8 +76,9 @@ public class GameController : MonoBehaviour
   private static DataEntity MakeBall(float ballSpeed, DataEntity root)
   {
     var ball = root.AddNewChild("Ball");
-    var _ballPosition = new Unit(new Rect(new Vector2(0, 0), new Vector2(0.125f, 0.125f)), ball);
-    _ballPosition.Velocity = new Vector2(Random.Range(0,ballSpeed), Random.Range(0,ballSpeed));
+    var ballPosition = ball.AddElement<Unit>();
+    ballPosition.Bounds = new Rect(new Vector2(0, 0), new Vector2(0.125f, 0.125f));
+    ballPosition.Velocity = new Vector2(Random.Range(0,ballSpeed), Random.Range(0,ballSpeed));
     return ball;
   }
 
