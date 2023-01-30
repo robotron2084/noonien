@@ -7,12 +7,30 @@ namespace com.enemyhideout.noonien
   public class CollectionObserver : ElementObserver<CollectionElement>
   {
     private VersionedDataObserver<ICollection<Node>> _collectionObserver;
-
+    private ICollection<Node> _observedCollection; // todo: encapsulate this better in an observer.
+    
     protected override void DataAdded(CollectionElement element)
     {
       base.DataAdded(element);
-      _collectionObserver = new VersionedDataObserver<ICollection<Node>>(OnCollectionChanged, element.Collection.Version);
-      element.Collection.AddObserver(_collectionObserver);
+      removeCollectionObserver();
+      addObserver();
+    }
+
+    protected override void DataUpdated(CollectionElement element)
+    {
+      base.DataUpdated(element);
+      if (element.Collection != _observedCollection)
+      {
+        removeCollectionObserver();
+        addObserver();
+      }
+    }
+
+    private void addObserver()
+    {
+      _observedCollection = _element.Collection;
+      _collectionObserver = new VersionedDataObserver<ICollection<Node>>(OnCollectionChanged, _observedCollection.Version);
+      _observedCollection.AddObserver(_collectionObserver);
       List<CollectionChange<Node>> changes = new List<CollectionChange<Node>>();
       for (var i = 0; i < _element.Collection.Count; i++)
       {
@@ -26,6 +44,16 @@ namespace com.enemyhideout.noonien
         });
       }
       NotifyIfCollectionChanged(changes);
+    }
+
+    private void removeCollectionObserver()
+    {
+      if (_collectionObserver != null)
+      {
+        _observedCollection.RemoveObserver(_collectionObserver);
+      }
+
+      _observedCollection = null;
 
     }
 
@@ -38,7 +66,9 @@ namespace com.enemyhideout.noonien
     protected override void DataRemoved(CollectionElement element)
     {
       base.DataRemoved(element);
-      element.Collection.RemoveObserver(_collectionObserver);
+      _observedCollection.RemoveObserver(_collectionObserver);
+      _observedCollection = null;
+      _collectionObserver = null;
     }
 
     private void NotifyIfCollectionChanged(IReadOnlyCollection<CollectionChange<Node>> collectionChanges)

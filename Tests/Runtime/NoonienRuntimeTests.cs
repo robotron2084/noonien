@@ -445,6 +445,26 @@ public class NoonienRuntimeTests
         yield return null;
         Assert.That(health.HasObservers(), Is.False);
     }
+    
+    
+    [UnityTest]
+    public IEnumerator TestElementObserverDoesntLeakOnNodeRemoved()
+    {
+        Node entity = new Node(_notifyManager);
+        HealthElement health = entity.AddElement<HealthElement>();
+        health.Health = 456;
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<NodeProvider>();
+        var observer = go.AddComponent<HealthObserver>();
+        dataSource.Node = entity;
+        yield return null;
+        Assert.That(health.HasObservers(), Is.True);
+        Assert.That(observer.ObservedHealth, Is.EqualTo(health.Health));
+        dataSource.Node = null;
+        yield return null;
+        Assert.That(health.HasObservers(), Is.False);
+    }
+
 
     [UnityTest]
     public IEnumerator TestCollectionObserverDoesntLeakOnDestroy()
@@ -464,6 +484,28 @@ public class NoonienRuntimeTests
         Object.Destroy(go);
         yield return null;
         Assert.That(collection.Collection.HasObservers(), Is.False);
+    }
+    
+    [UnityTest]
+    public IEnumerator TestCollectionObserverDoesntLeakOnCollectionRemoved()
+    {
+        Node entity = new Node(_notifyManager);
+        AddChildren(entity, 4);
+        CollectionElement collection = entity.AddElement<CollectionElement>();
+        
+
+        GameObject go = new GameObject();
+        var dataSource = go.AddComponent<NodeProvider>();
+        var observer = go.AddComponent<CollectionCounter>();
+        dataSource.Node = entity;
+        yield return null;
+        Assert.That(collection.HasObservers(), Is.True);
+        Assert.That(observer.Items, Is.EqualTo(entity.Children));
+        var oldCollection = collection.Collection;
+        collection.Collection = new Collection<Node>(_notifyManager);
+        yield return null;
+        Assert.That(collection.Collection.HasObservers(), Is.True);
+        Assert.That(oldCollection.HasObservers(), Is.False);
     }
 
     private static List<Node> AddChildren(Node parent, int numChildren, Action<Node> childCallback=null)
