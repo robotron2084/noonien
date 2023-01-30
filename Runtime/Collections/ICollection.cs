@@ -2,7 +2,11 @@
 
 namespace com.enemyhideout.soong
 {
-  public interface ICollection<T> : IEnumerable<T>,IObservable<ICollection<T>>
+  public interface ICollection
+  {
+    
+  }
+  public interface ICollection<T> : ICollection, IEnumerable<T>,IObservable<ICollection<T>>
   {
     T this[int index]
     {

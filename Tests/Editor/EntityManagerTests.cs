@@ -68,9 +68,64 @@ namespace com.enemyhideout.soong.tests
         Root = singleChildRoot,
         ExpectedValue = null
       }
-
     };
+    
+    [Test]
+    public void TestAdd()
+    {
+      var root = new DataEntity(null);
+      EntityManager manager = new EntityManager(root);
+      var entity = manager.Add("MyEntity");
+      Assert.That(entity, Is.Not.Null);
+      Assert.That(entity.Parent, Is.EqualTo(root));
+      Assert.That(entity.Name, Is.EqualTo("MyEntity"));
+
+      var sameEntity = manager.Get("MyEntity");
+      Assert.That(entity, Is.EqualTo(sameEntity));
+    }
+
+    [Test]
+    public void TestRegisterAndGetEntity()
+    {
+      var root = new DataEntity(null);
+      EntityManager manager = new EntityManager(root);
+      var child = root.AddNewChild("Child");
+      manager.Register("AnotherName", child);
+      var sameEntity = manager.Get("AnotherName");
+      Assert.That(sameEntity, Is.EqualTo(child));
+    }
+
+    [Test]
+    public void TestRegisterAndGetElement()
+    {
+      var root = new DataEntity(null);
+      EntityManager manager = new EntityManager(root);
+      var child = root.AddNewChild("Child");
+      var cashElement = new CashElement(child);
+      manager.Register("AnotherName", cashElement);
+      var sameEntity = manager.Get<CashElement>("AnotherName");
+      Assert.That(sameEntity, Is.EqualTo(cashElement));
+    }
+
+    [Test]
+    public void TestRegisterAndGetCollection()
+    {
+      var root = new DataEntity(null);
+      EntityManager manager = new EntityManager(root);
+      var child = root.AddNewChild("Child");
+      var cashElement = new CashElement(child);
+      manager.Register("AnotherName", root.Children);
+      var sameEntity = manager.GetCollection("AnotherName");
+      Assert.That(sameEntity, Is.EqualTo(root.Children));
+      
+      var sameEntityGeneric = manager.GetCollection<DataEntity>("AnotherName");
+      Assert.That(sameEntityGeneric, Is.EqualTo(root.Children));
+
+    }
+
   }
+  
+  
 
   public static class EntityExtensions
   {
@@ -83,13 +138,6 @@ namespace com.enemyhideout.soong.tests
 
       return entity;
     }
-
-    public static DataEntity AddNewChild(this DataEntity entity, string name)
-    {
-      var child = new DataEntity(entity.NotifyManager, name, entity);
-      entity.AddChild(child);
-      return child;
-    }
-
+    
   }
 }
