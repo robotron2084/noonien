@@ -11,6 +11,9 @@ namespace com.enemyhideout.noonien.editor
   {
     [SerializeField]
     protected VisualTreeAsset uxml;
+    
+    [SerializeField] public string _selectionPath;
+    
 
     public static NodeGraphEditor instance;
 
@@ -37,9 +40,30 @@ namespace com.enemyhideout.noonien.editor
         _manager = new NodeManager(_root);
         if (instance != null)
         {
-          instance.CurrentSelection = _root;
+          instance.InitializeSelection();
         }
       }
+    }
+
+    private void InitializeSelection()
+    {
+      Debug.Log($"Selection path : {_selectionPath}");
+      if (_root == null)
+      {
+        return;  // not initialized yet.
+      }
+
+      var initialSelection = _root;
+      if (!string.IsNullOrEmpty(_selectionPath))
+      {
+        var node = _manager.Find(_selectionPath);
+        if (node != null)
+        {
+          initialSelection = node;
+        }
+      }
+      CurrentSelection = initialSelection;
+      
     }
 
     private Node _currentSelection;
@@ -65,8 +89,7 @@ namespace com.enemyhideout.noonien.editor
     private ListView _childrenView;
     private List<Node> _childrenList;
 
-    private TextField _selectionPath;
-
+    private TextField _selectionPathField;
 
     private void CreateGUI()
     {
@@ -76,9 +99,9 @@ namespace com.enemyhideout.noonien.editor
       InitializeListView("Parent", OnSiblingSelectionChange, ((element, i) => OnBindItem(element, i, _parentsList)), rootVisualElement, ref _parentsView);
       InitializeListView("Children", OnSiblingSelectionChange, ((element, i) => OnBindItem(element, i, _childrenList)), rootVisualElement, ref _childrenView);
       
-      _selectionPath = rootVisualElement.Q<TextField>("SelectionPath");
-      _selectionPath.RegisterCallback<ChangeEvent<string>>(OnSelectionPathChanged);
-      _currentSelection = _root;
+      _selectionPathField = rootVisualElement.Q<TextField>("SelectionPath");
+      _selectionPathField.RegisterCallback<ChangeEvent<string>>(OnSelectionPathChanged);
+      InitializeSelection();
 
       _nodeInfo = rootVisualElement.Q<IMGUIContainer>();
       _nodeInfo.onGUIHandler = OnNodeOnGUI;
@@ -152,7 +175,8 @@ namespace com.enemyhideout.noonien.editor
         SetSelectedIndex(_childrenView, _childSelection, _childrenList);
         SetSelectedIndex(_parentsView, _parentSelection, _parentsList);
 
-        _selectionPath.value = _currentSelection.GetPath();
+        _selectionPath = _currentSelection.GetPath();
+        _selectionPathField.value = _selectionPath;
       }
 
     }
