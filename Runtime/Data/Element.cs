@@ -20,6 +20,13 @@ namespace com.enemyhideout.noonien
       }
     }
 
+    public Node Node => Parent;
+
+    public T Get<T>() where T : class
+    {
+      return _parent.Get<T>();
+    }
+
     protected void InitializeParent(Node parent)
     {
       if (_parent != null)
