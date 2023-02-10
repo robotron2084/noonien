@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace com.enemyhideout.noonien
 {
+  /// <summary>
+  /// A object of data, that contains other nodes and elements.
+  /// </summary>
   public class Node
   {
     private static TypeCache<Element> _typeCache = new TypeCache<Element>();
