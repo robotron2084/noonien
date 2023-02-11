@@ -13,7 +13,6 @@ namespace com.enemyhideout.noonien.editor
     protected VisualTreeAsset uxml;
     
     [SerializeField] public string _selectionPath;
-    
 
     public static NodeGraphEditor instance;
 
@@ -78,6 +77,7 @@ namespace com.enemyhideout.noonien.editor
       }
     }
     
+    private Vector2 _scrollPosition;
     private IMGUIContainer _nodeInfo;
     
     private ListView _siblingsView;
@@ -196,7 +196,9 @@ namespace com.enemyhideout.noonien.editor
     {
       if (_currentSelection != null)
       {
+        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
         NodeEditorCore.EditorForNode(_currentSelection);
+        GUILayout.EndScrollView();
       }
     }
 

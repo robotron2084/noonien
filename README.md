@@ -8,15 +8,18 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 
 TODO
   * Docs
-  * Helper functions for instantiation and collections.
+  * Systems Design - Create a controller subsystem for executing ticks.
+  * Serialization/Initialization - Can we define and load a data hierarchy without needing code?
+  * Improve the observing of collections - ElementObserver should allow for the observing of Collections just like Elements.
+  * Improve the observing of 'sub-items' - What if we want our observer to watch multiple nodes? What if we want our observer to be notified when, say, an element in an element is updated? Do I even want that?
+  * Helper functions for instantiation and collections - Spawners, Prefab/Addressables providers.
+  * Node Editor - Allow for display of collection items in graph, and also to open sub nodes.
   * More Samples
     * Rigid Body Based game.
     * Shop
-  * Rename DataEntity to DataNode? Nodes contain elements and other nodes.
-  * Add an AddElement<T>() for adding DataElements.
-  * EntityCollection should extend an abstract collection of Collection<T>.
 
 DONE
+  * Node Editor - Add scrolling to imgui container.
   * Renamed from Soong to Noonien. Highlights
     * DataEntity -> Node
     * DataElement -> Element
@@ -61,26 +64,45 @@ Something like:
 
 ```csharp
 
-var parent = new DataEntity("EnemyUnits");
-// by default all Children implement IEntityCollection.
-var element = new CollectionElement(parent.Children, notifyManager, collection);
+// Let's say that we want our observer to update when a node inside another observer is updated. We have a couple options:
 
-var enemyUnitManager = new GameObject();
-var dataSource = enemyUnitManager.AddComponent<DataSource>();
-var enemyUnitCounter = enemyUnitManager.AddComponent<EntityCollectionObserver>();
+// 1. Bubble up a data updated event to the 'root' element. This allows for
+// simple bindings of data. For example:
 
-dataSource.Entity = parent;
+public class MyElement : Element
+{
+  private SubElement _subData;
+  public SubElement SubData
+  {
+    get{
+      return _subData;
+    }
+    set{
+      if(_subData != null)
+      {
+        RemoveObserver(_subData);
+      }
+      _subData = value;
+      if(_subData != null)
+      {
+        AddObserver(_subData);
+      }
+    }
+  }
+}
 
-//add children to parent, and the element will update and notify.
+// 2. Require explicit listening to the element. Possibly more useful for collections
+// or if we want to do something in particular if this value were to change.
 
-```
+public class MyObserver : ElementObserver<MyElement>
+{
 
-```csharp
-// Virtual collection. We want some kind of virtual collections filtering.
-var sourceCollection = entity.Children;
-var collectionFilter = new CollectionFilter(x => x.Name.Contains("Fred"), sourceCollection);
-var virtualCollection = new VirtualEntityCollection(collectionFilter);
+    void Awake()
+    {
+    }
 
-var collectionElement = new CollectionElement();
-collectionElement.Collection = virtualCollection;
+
+}
+
+
 ```
