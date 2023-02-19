@@ -46,7 +46,6 @@ namespace com.enemyhideout.noonien.editor
 
     private void InitializeSelection()
     {
-      Debug.Log($"Selection path : {_selectionPath}");
       if (_root == null)
       {
         return;  // not initialized yet.
