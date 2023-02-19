@@ -111,13 +111,17 @@ namespace com.enemyhideout.noonien
 
     public static void PropertyCheck<T>(T newVal, ref T val, Observable observable)
     {
-      if (newVal.Equals(val))
+      if (newVal == null && val == null)
+      {
+        return;
+      }
+      if (newVal != null && newVal.Equals(val))
       {
         return;
       }
 
       val = newVal;
-      observable.MarkDirty();
+      observable?.MarkDirty();
 
     }
   }

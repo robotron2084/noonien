@@ -6,18 +6,14 @@ namespace com.enemyhideout.noonien
   {
     
   }
-  public interface ICollection<T> : ICollection, IEnumerable<T>,IObservable<ICollection<T>>
+  public interface ICollection<T> : ICollection, System.Collections.Generic.ICollection<T>, IEnumerable<T>,IObservable<ICollection<T>>
   {
     T this[int index]
     {
       get;
     }
-
-    int Count { get; }
-
     IReadOnlyCollection<CollectionChange<T>> GetChanges();
     
-    void Clear();
     bool HasObservers();
   }
 }

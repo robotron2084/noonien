@@ -12,6 +12,7 @@ namespace com.enemyhideout.noonien
     protected INotifyManager _notifyManager;
     protected Observable<ICollection<T>> _observable;
     private List<CollectionChange<T>> _changes = new List<CollectionChange<T>>();
+
     public Collection(INotifyManager notifyManager)
     {
       _notifyManager = notifyManager;
@@ -45,18 +46,23 @@ namespace com.enemyhideout.noonien
       MarkDirty();
     }
 
-    public void RemoveChild(T dataEntity)
+    public bool RemoveChild(T dataEntity)
     {
       int index = _children.IndexOf(dataEntity);
-      _children.Remove(dataEntity);
-      _changes.Add(new CollectionChange<T>
+      bool removed = _children.Remove(dataEntity);
+      if (removed)
       {
-        Item = dataEntity,
-        OldIndex = index,
-        NewIndex = -1,
-        Action = CollectionChangeAction.Removed
-      });
-      MarkDirty();
+        _changes.Add(new CollectionChange<T>
+        {
+          Item = dataEntity,
+          OldIndex = index,
+          NewIndex = -1,
+          Action = CollectionChangeAction.Removed
+        });
+        MarkDirty();
+      }
+
+      return removed;
     }
     
     public void RemoveObserver(IDataObserver<ICollection<T>> element)
@@ -81,12 +87,32 @@ namespace com.enemyhideout.noonien
       return _changes as IReadOnlyCollection<CollectionChange<T>>;
     }
 
+    public void Add(T item)
+    {
+      AddChild(item);
+    }
+
     public void Clear()
     {
       foreach (var child in _children.ToList())
       {
         RemoveChild(child);
       }
+    }
+
+    public bool Contains(T item)
+    {
+      return _children.Contains(item);
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+      _children.CopyTo(array, arrayIndex);
+    }
+
+    public bool Remove(T item)
+    {
+      return RemoveChild(item);
     }
 
     /// <summary>
@@ -113,6 +139,8 @@ namespace com.enemyhideout.noonien
     {
       get => _children.Count;
     }
+
+    public bool IsReadOnly { get; }
 
     private bool _dirty = false;
     public void MarkDirty()

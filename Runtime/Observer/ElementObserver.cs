@@ -78,7 +78,7 @@ namespace com.enemyhideout.noonien
 
     protected void Observe<TDataElement>(Action<TDataElement> updated, Action<TDataElement> added=null, Action<TDataElement> removed=null) where TDataElement : Element
     {
-      var observer = new DataElementObserver<TDataElement>(updated, added, removed) ;
+      var observer = new DataElementObserver<TDataElement>(updated, added, removed);
       _observers.Add(observer);
     }
 

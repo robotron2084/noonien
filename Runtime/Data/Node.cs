@@ -36,6 +36,11 @@ namespace com.enemyhideout.noonien
       {
         return _parent;
       }
+      set
+      {
+        // this is necessary for deserialization. Setting this outside of serialization won't do what you want.
+        _parent = value;
+      }
     }
 
     private Dictionary<Type, Element> _elementsMap = new Dictionary<Type, Element>();
@@ -76,7 +81,7 @@ namespace com.enemyhideout.noonien
     }
 
     private static ILogger _logger = new Logger(Debug.unityLogger.logHandler);
-
+    
     public Node(INotifyManager notifyManager)
     {
       _notifyManager = notifyManager;
@@ -93,6 +98,7 @@ namespace com.enemyhideout.noonien
       _notifyManager = notifyManager;
       _name = name;
     }
+
 
     public Node(INotifyManager notifyManager, string name, Node parent) : this(notifyManager, name)
     {
@@ -236,7 +242,11 @@ namespace com.enemyhideout.noonien
       {
         map[type] = element;
       }
-      dataElements.Add(element);
+
+      if (!dataElements.Contains(element))
+      {
+        dataElements.Add(element);
+      }
     }
 
     public void RemoveParent()
