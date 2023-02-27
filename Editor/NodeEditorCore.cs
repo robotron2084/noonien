@@ -9,17 +9,18 @@ namespace com.enemyhideout.noonien.editor
   public static class NodeEditorCore
   {
     
-    public static void EditorForNode(Node node)
+    public static void EditorForNode(Node node, Action OnNodeChanged)
     {
-      GUILayout.Box($"Node : {node.Name}");
 
+      PropertyInfo nameProp = typeof(Node).GetProperty(nameof(Node.Name));
+      StringProperty(nameProp, node, OnNodeChanged);
       foreach (var element in node.Elements)
       {
-        EditorForElement(element);
+        EditorForElement(element, OnNodeChanged);
       }
     }
 
-    private static Dictionary<Type, Action<PropertyInfo, Element>> _propertyDelegates = new Dictionary<Type, Action<PropertyInfo, Element>>()
+    private static Dictionary<Type, Action<PropertyInfo, Element, Action>> _propertyDelegates = new Dictionary<Type, Action<PropertyInfo, Element, Action>>()
     {
       {typeof(bool),  BoolProperty},
       {typeof(string),  StringProperty},
@@ -31,7 +32,7 @@ namespace com.enemyhideout.noonien.editor
       {typeof(Rect),  RectProperty},
     };
 
-    private static void ShowProperty<T>(PropertyInfo propertyInfo, Element element, Func<T,T> showEditor)
+    private static void ShowProperty<T>(PropertyInfo propertyInfo, object element, Func<T,T> showEditor, Action onPropertyChanged)
     {
       EditorGUI.BeginChangeCheck();
       T value = (T)propertyInfo.GetValue(element);
@@ -39,59 +40,60 @@ namespace com.enemyhideout.noonien.editor
       if (EditorGUI.EndChangeCheck())
       {
         propertyInfo.SetValue(element, newValue);
+        onPropertyChanged?.Invoke();
       }
     }
     
-    private static void StringProperty(PropertyInfo propertyInfo, Element element)
+    private static void StringProperty(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<string>(propertyInfo, element, (x) => EditorGUILayout.TextField(propertyInfo.Name, x));
+      ShowProperty<string>(propertyInfo, element, (x) => EditorGUILayout.TextField(propertyInfo.Name, x), onPropertyChanged);
     }
 
-    private static void Vector2Property(PropertyInfo propertyInfo, Element element)
+    private static void Vector2Property(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<Vector2>(propertyInfo, element, (x) => EditorGUILayout.Vector2Field(propertyInfo.Name, x));
+      ShowProperty<Vector2>(propertyInfo, element, (x) => EditorGUILayout.Vector2Field(propertyInfo.Name, x), onPropertyChanged);
     }
 
-    private static void Vector3Property(PropertyInfo propertyInfo, Element element)
+    private static void Vector3Property(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<Vector3>(propertyInfo, element, (x) => EditorGUILayout.Vector3Field(propertyInfo.Name, x));
+      ShowProperty<Vector3>(propertyInfo, element, (x) => EditorGUILayout.Vector3Field(propertyInfo.Name, x), onPropertyChanged);
     }
     
-    private static void Vector4Property(PropertyInfo propertyInfo, Element element)
+    private static void Vector4Property(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<Vector4>(propertyInfo, element, (x) => EditorGUILayout.Vector4Field(propertyInfo.Name, x));
+      ShowProperty<Vector4>(propertyInfo, element, (x) => EditorGUILayout.Vector4Field(propertyInfo.Name, x), onPropertyChanged);
     }
 
-    private static void RectProperty(PropertyInfo propertyInfo, Element element)
+    private static void RectProperty(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<Rect>(propertyInfo, element, (x) => EditorGUILayout.RectField(propertyInfo.Name, x));
+      ShowProperty<Rect>(propertyInfo, element, (x) => EditorGUILayout.RectField(propertyInfo.Name, x), onPropertyChanged);
     }
 
-    private static void IntProperty(PropertyInfo propertyInfo, Element element)
+    private static void IntProperty(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<int>(propertyInfo, element, (x) => EditorGUILayout.IntField(propertyInfo.Name, x));
+      ShowProperty<int>(propertyInfo, element, (x) => EditorGUILayout.IntField(propertyInfo.Name, x), onPropertyChanged);
     }
 
-    private static void FloatProperty(PropertyInfo propertyInfo, Element element)
+    private static void FloatProperty(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<float>(propertyInfo, element, (x) => EditorGUILayout.FloatField(propertyInfo.Name, x));
+      ShowProperty<float>(propertyInfo, element, (x) => EditorGUILayout.FloatField(propertyInfo.Name, x), onPropertyChanged);
     }
 
-    private static void BoolProperty(PropertyInfo propertyInfo, Element element)
+    private static void BoolProperty(PropertyInfo propertyInfo, object element, Action onPropertyChanged)
     {
-      ShowProperty<bool>(propertyInfo, element, (x) => EditorGUILayout.Toggle(propertyInfo.Name, x));
+      ShowProperty<bool>(propertyInfo, element, (x) => EditorGUILayout.Toggle(propertyInfo.Name, x), onPropertyChanged);
     }
 
-    private static void EditorForElement(Element element)
+    private static void EditorForElement(Element element, Action onElementChanged)
     {
       
       PropertyInfo[] properties = element.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-      bool showFoldout = EditorPrefs.GetBool(element.GetType().ToString(), false);
+      bool showFoldout = EditorPrefs.GetBool(element.GetType().Name, false);
       EditorGUI.BeginChangeCheck();
-      showFoldout = EditorGUILayout.Foldout(showFoldout, element.GetType().ToString());
+      showFoldout = EditorGUILayout.Foldout(showFoldout, element.GetType().Name);
       if (EditorGUI.EndChangeCheck())
       {
-        EditorPrefs.SetBool(element.GetType().ToString(), showFoldout);
+        EditorPrefs.SetBool(element.GetType().Name, showFoldout);
       }
 
       if (showFoldout)
@@ -105,7 +107,7 @@ namespace com.enemyhideout.noonien.editor
             {
               if (_propertyDelegates.TryGetValue(propertyInfo.PropertyType, out var del))
               {
-                del(propertyInfo, element);
+                del(propertyInfo, element, onElementChanged);
               }
               else
               {

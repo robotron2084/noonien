@@ -192,6 +192,13 @@ namespace com.enemyhideout.noonien
       _children.RemoveChild(node);
     }
 
+    public Element AddElement(Type type)
+    {
+      var element = (Element)Activator.CreateInstance(type);
+      element.Parent = this;
+      return element;
+    }
+
     public T AddElement<T>() where T : Element, new() 
     {
       var element = new T();

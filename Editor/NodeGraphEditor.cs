@@ -196,7 +196,7 @@ namespace com.enemyhideout.noonien.editor
       if (_currentSelection != null)
       {
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
-        NodeEditorCore.EditorForNode(_currentSelection);
+        NodeEditorCore.EditorForNode(_currentSelection, null);
         GUILayout.EndScrollView();
       }
     }

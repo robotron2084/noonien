@@ -22,7 +22,7 @@ namespace com.enemyhideout.noonien.editor
           {
             if (source.Node != null)
             {
-              NodeEditorCore.EditorForNode(source.Node);
+              NodeEditorCore.EditorForNode(source.Node, null);
             }
             else
             {
