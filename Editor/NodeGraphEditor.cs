@@ -167,9 +167,9 @@ namespace com.enemyhideout.noonien.editor
           _childrenList = new List<Node>();
         }
 
-        _parentsView.itemsSource = _parentsList;
-        _childrenView.itemsSource = _childrenList;
-        _siblingsView.itemsSource = _siblingsList;
+        _parentsView.itemsSource = UseEmptyIfNull(_parentsList);
+        _childrenView.itemsSource = UseEmptyIfNull(_childrenList);
+        _siblingsView.itemsSource = UseEmptyIfNull(_siblingsList);
         SetSelectedIndex(_siblingsView, siblingSelection, _siblingsList);
         SetSelectedIndex(_childrenView, _childSelection, _childrenList);
         SetSelectedIndex(_parentsView, _parentSelection, _parentsList);
@@ -180,15 +180,22 @@ namespace com.enemyhideout.noonien.editor
 
     }
 
+    private static List<Node> Empty = new List<Node>();
+
+    private static List<Node> UseEmptyIfNull(List<Node> list)
+    {
+      return list == null ? Empty : list;
+    }
+
     private static void SetSelectedIndex(ListView listView, Node item, List<Node> dataSource)
     {
       int index = -1;
       if (item != null)
       {
         index = dataSource.IndexOf(item);
+        listView.SetSelectionWithoutNotify(new int[]{ index });
       }
 
-      listView.SetSelectionWithoutNotify(new int[]{ index });
     }
     
     private void OnNodeOnGUI()
@@ -206,7 +213,7 @@ namespace com.enemyhideout.noonien.editor
       CurrentSelection = selectedItems.Cast<Node>().FirstOrDefault();
     }
 
-    public void Update()
+    public void OnInspectorUpdate()
     {
       Repaint();
     }

@@ -9,6 +9,7 @@ Would you like a better way to work with Data in your games? Well, my friend, yo
 TODO
   * Docs
   * Systems Design - Create a controller subsystem for executing ticks.
+    * Problem - remove items automatically from system.
   * Serialization/Initialization - Can we define and load a data hierarchy without needing code?
   * Improve the observing of collections - ElementObserver should allow for the observing of Collections just like Elements.
   * Improve the observing of 'sub-items' - What if we want our observer to watch multiple nodes? What if we want our observer to be notified when, say, an element in an element is updated? Do I even want that?
